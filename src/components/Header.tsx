@@ -7,21 +7,21 @@ export default function Header() {
   const [clearClicked, setClearClicked] = useState(false);
   const [optionClicked, setOptionClicked] = useState(false);
 
-  const switchOpen = () => setOpenClicked(!openClicked);
+  // const switchOpen = () => setOpenClicked(!openClicked);
   const switchClear = () => setClearClicked(!clearClicked);
   const switchOption = () => setOptionClicked(!optionClicked);
 
-  // const openFiles = () => {
-  //   console.log(
-  //     dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] })
-  //   );
-  // };
+  const getFileList = async (): Promise<void> => {
+    const fileList = await window.valleryAPI.selectFiles();
+    console.log('Files selected:');
+    for (const item of fileList) console.log(item);
+  };
 
   return (
     <div className='headContain'>
-      <Button label='OPEN' flip={switchOpen} />
-      <Button label='CLEAR' flip={switchClear} />
-      <Button label='OPTIONS' flip={switchOption} />
+      <Button label='OPEN' runFun={getFileList} />
+      <Button label='CLEAR' runFun={switchClear} />
+      <Button label='OPTIONS' runFun={switchOption} />
     </div>
   );
 }

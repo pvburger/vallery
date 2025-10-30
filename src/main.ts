@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen } from 'electron';
+import { app, BrowserWindow, screen, ipcMain, dialog } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 
@@ -7,17 +7,24 @@ if (started) {
   app.quit();
 }
 
-const createWindow = () => {
+// Keep a global reference of the window object, if you don't, the window will
+// be closed automatically when the JavaScript object is garbage collected.
+let mainWindow: BrowserWindow | null = null;
+
+const createWindow = async () => {
   // Get primary display size
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
 
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width,
     height,
     webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      // Staring with Electron 20, sandbox is enabled by default
+      sandbox: true,
       preload: path.join(__dirname, 'preload.js'),
-
     },
   });
 
@@ -38,6 +45,22 @@ const createWindow = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow);
+
+// Method to open file system dialog, get file list from user and return
+// response to React
+ipcMain.handle('dialog:selectFiles', async (): Promise<string[]> => {
+  try {
+    const result = await dialog.showOpenDialog({
+      properties: ['openFile', 'multiSelections'],
+      filters: [{ name: 'Videos', extensions: ['mp4', 'mkv', 'avi', 'mov'] }],
+    });
+    // send file paths back to renderer
+    return result.filePaths;
+  } catch (err) {
+    console.log(`There was an error retrieving the file list: ${err}`);
+    return [] as string[];
+  }
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

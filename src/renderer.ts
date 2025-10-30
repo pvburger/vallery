@@ -29,7 +29,14 @@
 import './index.css';
 import './components/App';
 
-
+// Declare exposed API
+declare global {
+  interface Window {
+    valleryAPI: {
+      selectFiles: () => Promise<string[]>;
+    };
+  }
+}
 
 console.log(
   '👋 This message is being logged by "renderer.ts", included via Vite'
