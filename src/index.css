@@ -12,6 +12,7 @@ body {
   border-color: green;
   width: 100vw;
   height: 100vw;
+  background-color: black;
 }
 
 .headContain {
@@ -34,15 +35,20 @@ body {
 .button {
   border-style: solid;
   border-width: 1px;
-  border-color: black;
+  border-color: white;
   border-radius: 0.5vw;
-  background-color: white;
+  background-color: black;
   font-size: 1rem;
-  color: black;
+  color: white;
   width: 25vw;
   height: 5vw;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
+}
+
+.vidDiv {
+  margin-bottom: 5vw;
+  color: white;
 }

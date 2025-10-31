@@ -4,6 +4,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 
 contextBridge.exposeInMainWorld('valleryAPI', {
   selectFiles: async (): Promise<string[]> => {
+    // invoke is async
     return await ipcRenderer.invoke('dialog:selectFiles');
   },
 });
