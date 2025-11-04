@@ -24,14 +24,16 @@ export default function Container() {
       // console.log(`srcAddress: ${srcAddress}`);
       result.push(
         <div className='vidDiv' key={`vidDiv_${keyCount}`}>
-          <video
-            src={srcAddress}
-            controls
-            width='1200'
-            height='675'
-            preload='metadata'
-          ></video>
-          <h2>{item}</h2>
+          <figure>
+            <video
+              src={srcAddress}
+              controls
+              width='1200'
+              height='675'
+              preload='metadata'
+            ></video>
+            <figcaption>{item}</figcaption>
+          </figure>
         </div>
       );
       keyCount++;

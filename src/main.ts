@@ -13,7 +13,6 @@ import path from 'node:path';
 import url from 'node:url';
 import started from 'electron-squirrel-startup';
 
-
 // Establish protocol to enable local file access
 // Must be run before 'ready' event is emitted
 protocol.registerSchemesAsPrivileged([

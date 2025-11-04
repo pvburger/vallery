@@ -4,6 +4,7 @@ body {
     sans-serif;
   margin: 0;
   padding: 0;
+  background-color: black;
 }
 
 .mainContain {
@@ -11,7 +12,6 @@ body {
   border-width: 1px;
   border-color: green;
   width: 100vw;
-  height: 100vw;
   background-color: black;
 }
 
@@ -30,6 +30,9 @@ body {
   border-style: solid;
   border-width: 1px;
   border-color: blue;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .button {
@@ -49,6 +52,13 @@ body {
 }
 
 .vidDiv {
+  border-style: solid;
+  border-width: 1px;
+  border-color: yellow;
   margin-bottom: 5vw;
   color: white;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  align-items: center;
 }
