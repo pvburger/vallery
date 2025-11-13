@@ -6,11 +6,8 @@ import {
   screen,
   ipcMain,
   dialog,
-  protocol,
-  net,
 } from 'electron';
 import path from 'node:path';
-import url from 'node:url';
 import started from 'electron-squirrel-startup';
 import createServer from '../server/server';
 

@@ -19,10 +19,7 @@ export default function Container() {
     const result: React.ReactElement[] = [];
     let keyCount = 1;
     for (const item of clipArray) {
-      // console.log(`Item: ${item}`);
-      // const srcAddress = `scrub://${item}`;
       const srcAddress = `http://127.0.0.1:3333/video?path=${item}`;
-      // console.log(`srcAddress: ${srcAddress}`);
       result.push(
         <div className='vidDiv' key={`vidDiv_${keyCount}`}>
           <figure>
