@@ -7,4 +7,8 @@ contextBridge.exposeInMainWorld('valleryAPI', {
     // invoke is async
     return await ipcRenderer.invoke('dialog:selectFiles');
   },
+  getRandomNum: async (lo: number, hi: number): Promise<number> => {
+    // invoke is async
+    return await ipcRenderer.invoke('getRandom', lo, hi);
+  },
 });

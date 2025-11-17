@@ -1,39 +1,12 @@
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
-import {
-  app,
-  BrowserWindow,
-  screen,
-  ipcMain,
-  dialog,
-} from 'electron';
+import { app, BrowserWindow, screen, ipcMain, dialog } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import createServer from '../server/server';
+import crypto from 'crypto';
+import type { IpcMainInvokeEvent } from 'electron';
 
-/*
-// Establish protocol to enable local file access
-// Must be run before 'ready' event is emitted
-protocol.registerSchemesAsPrivileged([
-  {
-    scheme: 'scrub',
-    privileges: {
-      // standard - determines how file resolution works
-      // Omit or set to 'false' when serving local files exclusively
-      standard: false,
-      // secure - whether scheme is considered secure by Chromium
-      // Set to 'true' initially; if resources end up being blocked or 'CORS' errors, consider changing to 'false'
-      secure: true,
-      // stream - whether this scheme support streaming responses
-      // Must set to true when trying to stream media
-      stream: true, 
-      // supportFetchAPI - exposes the browser 'Fetch' API in the renderer; does not affect main.ts
-      // Omit or set to 'false' if fetch is not used by the renderer
-      supportFetchAPI: false,
-    },
-  },
-]);
-*/
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -44,7 +17,7 @@ if (started) {
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow: BrowserWindow | null = null;
 
-// start server
+// start ExpressJS server
 createServer();
 
 const createWindow = async () => {
@@ -77,8 +50,7 @@ const createWindow = async () => {
 };
 
 const registerHandlers = (): void => {
-  // Method to open file system dialog, get file list from user and return
-  // response to React
+  // Method to open file system dialog, get file list from user and return response to React
   ipcMain.handle('dialog:selectFiles', async (): Promise<string[]> => {
     try {
       const result = await dialog.showOpenDialog({
@@ -93,14 +65,29 @@ const registerHandlers = (): void => {
     }
   });
 
-  /*
-  protocol.handle('scrub', (req) => {
-    // console.log(`req.url: ${req.url}`);
-    const filePath = req.url.slice('scrub://'.length);
-    // console.log(`filePath: ${filePath}`);
-    return net.fetch(url.pathToFileURL(filePath).toString());
-  });
-  */
+  // need to explicitly include implied 'event' in the following function call because the function takes additional parameters
+  ipcMain.handle(
+    'getRandom',
+    async (
+      event: IpcMainInvokeEvent,
+      lo: number,
+      hi: number
+    ): Promise<number> => {
+      return new Promise((res, rej) => {
+        crypto.randomInt(lo, hi, (err, n) => {
+          if (err) {
+            console.log(
+              `There was an error generating the random number: ${err}`
+            );
+            rej(err);
+          }
+          // added for development
+          // console.log(`lo: ${lo} / hi: ${hi} / random: ${n}`);
+          res(n);
+        });
+      });
+    }
+  );
 };
 
 const initialize = async (): Promise<void> => {

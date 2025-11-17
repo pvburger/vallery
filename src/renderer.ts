@@ -34,6 +34,7 @@ declare global {
   interface Window {
     valleryAPI: {
       selectFiles: () => Promise<string[]>;
+      getRandomNum: (lo: number, hi: number) => Promise<number>;
     };
   }
 }

@@ -15,11 +15,19 @@ export default function Menu(props: MenuProps) {
     vWidth.set(vWidths[currIdx]);
   };
 
+  // function to establish color for buttons
+  const getColor = (inp: boolean | number): string => {
+    if (inp === true) return 'green';
+    if (inp === false) return 'red';
+    else return 'blue';
+  };
+
   return (
     <div className='menus'>
       <div className='menuEntry'>
         <button
           className='toggle'
+          style={{ backgroundColor: getColor(randOrder.get()) }}
           onClick={() => randOrder.set(!randOrder.get())}
         ></button>
         <p className='menuEntryTxt'>
@@ -29,6 +37,7 @@ export default function Menu(props: MenuProps) {
       <div className='menuEntry'>
         <button
           className='toggle'
+          style={{ backgroundColor: getColor(randStart.get()) }}
           onClick={() => randStart.set(!randStart.get())}
         ></button>
         <p className='menuEntryTxt'>
@@ -38,6 +47,7 @@ export default function Menu(props: MenuProps) {
       <div className='menuEntry'>
         <button
           className='toggle'
+          style={{ backgroundColor: getColor(autoStart.get()) }}
           onClick={() => autoStart.set(!autoStart.get())}
         ></button>
         <p className='menuEntryTxt'>
@@ -47,12 +57,17 @@ export default function Menu(props: MenuProps) {
       <div className='menuEntry'>
         <button
           className='toggle'
+          style={{ backgroundColor: getColor(mute.get()) }}
           onClick={() => mute.set(!mute.get())}
         ></button>
         <p className='menuEntryTxt'>Mute: {`${mute.get()}`}</p>
       </div>
       <div className='menuEntry'>
-        <button className='toggle' onClick={incVidSize}></button>
+        <button
+          className='toggle'
+          style={{ backgroundColor: getColor(vWidth.get()) }}
+          onClick={incVidSize}
+        ></button>
         <p className='menuEntryTxt'>Video Size: {`${vWidth.get()}`}</p>
       </div>
     </div>
