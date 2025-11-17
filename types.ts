@@ -21,3 +21,16 @@ export class VideoStats {
     this.duration = null;
   }
 }
+
+export type StateMod<T> = {
+  get(): T;
+  set(inp: T): void;
+};
+
+export type MenuProps = {
+  randOrder: StateMod<boolean>;
+  randStart: StateMod<boolean>;
+  autoStart: StateMod<boolean>;
+  mute: StateMod<boolean>;
+  vWidth: StateMod<number>;
+};
