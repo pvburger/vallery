@@ -39,12 +39,10 @@ export default function VideoItem(props: VideoItemProps) {
     return (await window.valleryAPI.getRandomNum(lo, hi)) / 1000;
   };
 
-  // added for development
-  console.log(`Path: ${path}`);
-
+  // all of the inline styling included below is crucial to proper function
   return (
     <div>
-      <figure>
+      <div style={{ height: vWidth * (9 / 16) }}>
         <video
           src={srcAddress}
           controls
@@ -55,9 +53,10 @@ export default function VideoItem(props: VideoItemProps) {
           loop={true}
           preload='metadata'
           onLoadedMetadata={(event) => handleMetadata(event)}
+          style={{ margin: 0 }}
         ></video>
-        <figcaption>{path.slice(lastSlash)}</figcaption>
-      </figure>
+      </div>
+      <p style={{ margin: 0, paddingTop: '5px' }}>{path.slice(lastSlash)}</p>
     </div>
   );
 }

@@ -12,7 +12,7 @@ export default function Container() {
   const [randStart, setRandStart] = useState(true);
   const [autoStart, setAutoStart] = useState(true);
   const [mute, setMute] = useState(true);
-  const [vWidth, setVWidth] = useState(960);
+  const [vWidth, setVWidth] = useState(720);
 
   // wrappers
   const clearFileList = (): void => {
@@ -67,10 +67,8 @@ export default function Container() {
         // swap array elements using desctructuring
         [inp[i], inp[randomNum]] = [inp[randomNum], inp[i]];
       }
-      // return inp;
     } catch (err) {
       console.log(`There was an error randomizing the array: ${err}`);
-      // return inp;
     }
     return inp;
   };
@@ -90,11 +88,11 @@ export default function Container() {
   };
 
   // added for development
-  useEffect(() => {
-    for (let i = 0; i < clipArray.length; i++) {
-      console.log(`Item ${i}: ${clipArray[i]}`);
-    }
-  }, [clipArray]);
+  // useEffect(() => {
+  //   for (let i = 0; i < clipArray.length; i++) {
+  //     console.log(`Item ${i}: ${clipArray[i]}`);
+  //   }
+  // }, [clipArray]);
 
   return (
     <div className='mainContain'>
@@ -109,13 +107,15 @@ export default function Container() {
         <Button label='OPTIONS' runFun={toggleMenu}></Button>
       </div>
       {menuDisplay && (
-        <Menu
-          randOrder={randOrderControl}
-          randStart={randStartControl}
-          autoStart={autoStartControl}
-          mute={muteControl}
-          vWidth={vWidthControl}
-        ></Menu>
+        <div className='menuContain'>
+          <Menu
+            randOrder={randOrderControl}
+            randStart={randStartControl}
+            autoStart={autoStartControl}
+            mute={muteControl}
+            vWidth={vWidthControl}
+          ></Menu>
+        </div>
       )}
       <div className='bodyContain'>
         <VirtuosoGrid
