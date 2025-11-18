@@ -11,7 +11,7 @@ body {
   border-style: solid;
   border-width: 1px;
   border-color: green;
-  width: 100vw;
+  width: 100%;
   background-color: black;
 }
 
@@ -23,16 +23,7 @@ body {
   flex-direction: row;
   justify-content: space-evenly;
   margin-top: 2.5vw;
-  margin-bottom: 2.5vw;
-}
-
-.bodyContain {
-  border-style: solid;
-  border-width: 1px;
-  border-color: blue;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
+  /* margin-bottom: 2.5vw; */
 }
 
 .button {
@@ -51,14 +42,6 @@ body {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-}
-
-.vidDiv {
-  border-style: solid;
-  border-width: 1px;
-  border-color: yellow;
-  margin-bottom: 2vw;
-  color: white;
 }
 
 .menus {
@@ -87,4 +70,33 @@ body {
 
 .menuEntryTxt {
   margin-left: 1vw;
+}
+
+.bodyContain {
+  border-style: solid;
+  border-width: 1px;
+  border-color: blue;
+  margin: 0;
+  height: 75vh;
+}
+
+.gridContainer {
+  /* border-style: solid;
+  border-width: 1px;
+  border-color: blue;
+  margin: 0; */
+  display: flex;
+  flex-wrap: wrap;
+  /* justify-content: space-evenly; */
+}
+
+.gridItem {
+  border-style: solid;
+  border-width: 1px;
+  border-color: yellow;
+  /* margin-bottom: 2vw; */
+  object-fit: contain;
+  color: white;
+  display: flex;
+  flex-direction: column;
 }

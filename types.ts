@@ -34,3 +34,11 @@ export type MenuProps = {
   mute: StateMod<boolean>;
   vWidth: StateMod<number>;
 };
+
+export type VideoItemProps = {
+  path: string;
+  vWidth: number;
+  mute: boolean;
+  autoStart: boolean;
+  randStart: boolean;
+}
