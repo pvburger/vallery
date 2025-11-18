@@ -7,7 +7,6 @@ import createServer from '../server/server';
 import crypto from 'crypto';
 import type { IpcMainInvokeEvent } from 'electron';
 
-
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
   app.quit();
@@ -46,7 +45,7 @@ const createWindow = async () => {
   }
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 };
 
 const registerHandlers = (): void => {
