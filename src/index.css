@@ -5,67 +5,66 @@ body {
   margin: 0;
   padding: 0;
   background-color: black;
+  /* this disables scrollbars; virtuose will handle them as needed */
+  overflow: hidden;
 }
 
 .mainContain {
-  border-style: solid;
+  /* border-style: solid;
   border-width: 1px;
-  border-color: green;
-  width: 100vw;
+  border-color: green; */
+  width: 100%;
+  height: 100%;
   background-color: black;
 }
 
 .headContain {
-  border-style: solid;
+  /* border-style: solid;
   border-width: 1px;
-  /* border-color: red; */
+  border-color: red; */
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  margin-top: 2.5vw;
-  margin-bottom: 2.5vw;
+  padding-top: 2.5vh;
+  padding-bottom: 5vh;
 }
 
-.bodyContain {
-  border-style: solid;
+.menuContain {
+  /* border-style: solid;
   border-width: 1px;
-  border-color: blue;
+  border-color: yellow; */
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
+  flex-direction: row;
+  justify-content: center;
+  padding-bottom: 5vh;
 }
 
 .button {
   border-style: solid;
-  border-width: 1px;
-  border-color: white;
-  border-radius: 0.75vw;
+  border-width: 2px;
+  border-color: #404040;
+  border-radius: 1vh;
   background-color: black;
   font-size: 1.25rem;
-  color: white;
+  font-style: italic;
   font-weight: bold;
+  color: #404040;
   letter-spacing: 1px;
   width: 25vw;
-  height: 3vw;
+  height: 4vh;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
 }
 
-.vidDiv {
-  border-style: solid;
-  border-width: 1px;
-  border-color: yellow;
-  margin-bottom: 2vw;
-  color: white;
-}
-
 .menus {
   border-style: solid;
-  border-width: 1px;
-  border-color: white;
-  color: white;
+  border-width: 2px;
+  border-color: #404040;
+  border-radius: 1vh;
+  width: 96vw;
+  color: #c0c0c0;
 }
 
 .menuEntry {
@@ -78,8 +77,8 @@ body {
 
 .toggle {
   border-style: solid;
-  border-width: 1px;
-  border-color: black;
+  border-width: 2px;
+  border-color: #404040;
   border-radius: 1vw;
   width: 2vw;
   height: 2vw;
@@ -87,4 +86,35 @@ body {
 
 .menuEntryTxt {
   margin-left: 1vw;
+}
+
+.bodyContain {
+  /* border-style: solid;
+  border-width: 1px;
+  border-color: blue; */
+  margin: 0;
+  height: 88.5vh;
+}
+
+.gridContainer {
+  /* border-style: solid;
+  border-width: 1px;
+  border-color: blue; */
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.gridItem {
+  /* border-style: solid;
+  border-width: 1px;
+  border-color: yellow; */
+  margin: 0;
+  padding: 5px;
+  padding-bottom: 4vh;
+  object-fit: contain;
+  color: #c0c0c0;
+  display: flex;
+  flex-direction: column;
 }

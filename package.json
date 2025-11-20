@@ -1,7 +1,7 @@
 {
   "name": "vallery",
   "productName": "vallery",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
   "scripts": {
@@ -41,6 +41,7 @@
     "electron-squirrel-startup": "^1.0.1",
     "express": "^5.1.0",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "react-virtuoso": "^4.14.1"
   }
 }
