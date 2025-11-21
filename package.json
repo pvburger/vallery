@@ -10,7 +10,8 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
-    "dist": "electron-builder --linux AppImage"
+    "dist": "npm run package && electron-builder --linux AppImage",
+    "clean": "rm -rf ./out && rm -rf ./dist-builder"
   },
   "keywords": [],
   "author": "qubit",
@@ -52,8 +53,14 @@
       "target": "AppImage"
     },
     "files": [
-      "**/*",
-      "!/untracked/**"
-    ]
+      ".vite/**/*"
+    ],
+    "extraResources": [
+      "LICENSE",
+      "README.md"
+    ],
+    "directories": {
+      "output": "dist-builder"
+    }
   }
 }
