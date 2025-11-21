@@ -85,11 +85,14 @@ typings/
 # Webpack
 .webpack/
 
-# Vite
+# Vite build folder
 .vite/
 
-# Electron-Forge
+# Electron-Forge maker folder
 out/
+
+# Electron_Builder build folder
+dist-builder/
 
 # Untracked files
 untracked/
