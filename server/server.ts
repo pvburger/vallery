@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { VideoStats } from '../types';
 import fs from 'fs';
+import { stat } from 'fs/promises';
 
 export default function createServer() {
   const server = express();
@@ -9,12 +10,15 @@ export default function createServer() {
   const PORT = 3333;
 
   // function to return object with video stats based on request header string
-  const getVidStats = (inpPath: string, inpRange: string): VideoStats => {
+  const getVidStats = async (
+    inpPath: string,
+    inpRange: string
+  ): Promise<VideoStats> => {
     try {
       const result = new VideoStats();
 
       // this could be implemented asynchronously
-      const vStats = fs.statSync(inpPath);
+      const vStats = await stat(inpPath);
 
       result.duration = vStats.size;
 
@@ -43,7 +47,7 @@ export default function createServer() {
   server.use(express.json());
 
   // router for all valid endpoints
-  server.get('/video', (req, res) => {
+  server.get('/video', async (req, res) => {
     const filePath = req.query.path;
     const range = req.headers.range;
 
@@ -57,14 +61,24 @@ export default function createServer() {
     // make sure filePath is a valid path
     // this shouldn't be an issue at this point as the path is chosen with Electron's dialog.showOpenDialog method
     // the async version of existsSync (fs.exists) is deprecated
-    if (!fs.existsSync(filePath)) {
+    const myAsyncExists = async (fPath: string): Promise<boolean> => {
+      try {
+        await stat(fPath);
+        return true;
+      } catch (err) {
+        console.log(`There was a problem accessing ${fPath}: ${err}`);
+        return false;
+      }
+    };
+
+    if (!(await myAsyncExists(filePath))) {
       return res.status(404).send('File not found');
     }
 
     // added for development
     // console.log(`Range value: ${req.headers.range}`);
 
-    const vidStats = getVidStats(filePath, range);
+    const vidStats = await getVidStats(filePath, range);
     if (
       vidStats.start === null ||
       vidStats.end === null ||
