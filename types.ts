@@ -1,4 +1,4 @@
-import { ParsedQs } from 'qs';
+import type { ParsedQs } from 'qs';
 
 export type ButtonProp = {
   label: string;
@@ -41,4 +41,13 @@ export type VideoItemProps = {
   mute: boolean;
   autoStart: boolean;
   randStart: boolean;
-}
+};
+
+export type ValSettings = {
+  randOrder: boolean;
+  randStart: boolean;
+  autoStart: boolean;
+  mute: boolean;
+  vWidth: number;
+  lastPath: string;
+};

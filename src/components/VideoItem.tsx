@@ -1,4 +1,4 @@
-import { VideoItemProps } from '../../types';
+import type { VideoItemProps } from '../../types';
 
 export default function VideoItem(props: VideoItemProps) {
   const { path, vWidth, mute, autoStart, randStart } = props;

@@ -28,13 +28,22 @@
 
 import './index.css';
 import './components/App';
+import type { ValSettings } from 'types';
 
 // Declare exposed API
 declare global {
+  // see preload.ts for a discussion of generics used in getStoreVal and setStoreVal below
   interface Window {
     valleryAPI: {
       selectFiles: () => Promise<string[]>;
       getRandomNum: (lo: number, hi: number) => Promise<number>;
+      getStoreVal: <K extends keyof ValSettings>(
+        storeKey: K
+      ) => Promise<ValSettings[K]>;
+      setStoreVal: <K extends keyof ValSettings>(
+        storeKey: K,
+        keyVal: ValSettings[K]
+      ) => void;
     };
   }
 }

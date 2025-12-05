@@ -5,6 +5,10 @@ import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import createServer from '../server/server';
 import crypto from 'crypto';
+import Store from 'electron-store';
+import { schema } from './store';
+import { getLastPath } from './utils';
+import type { ValSettings } from 'types';
 import type { IpcMainInvokeEvent } from 'electron';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -18,6 +22,9 @@ let mainWindow: BrowserWindow | null = null;
 
 // start ExpressJS server
 createServer();
+
+// initialize electron-store
+const eStore = new Store({ schema });
 
 const createWindow = async () => {
   // Get primary display size
@@ -44,7 +51,7 @@ const createWindow = async () => {
     );
   }
 
-  // Open the DevTools.
+  // open developer tools
   // mainWindow.webContents.openDevTools();
 };
 
@@ -52,10 +59,21 @@ const registerHandlers = (): void => {
   // Method to open file system dialog, get file list from user and return response to React
   ipcMain.handle('dialog:selectFiles', async (): Promise<string[]> => {
     try {
+      const startPath = eStore.get('lastPath');
+
       const result = await dialog.showOpenDialog({
         properties: ['openFile', 'multiSelections'],
         filters: [{ name: 'Videos', extensions: ['mp4', 'mkv', 'avi', 'mov'] }],
+        // conditionally spread in defaultPath property if not an empty string
+        ...(startPath.length > 0 && { defaultPath: startPath }),
       });
+
+      // update electron-store with the folder path of the last file in the filePaths array
+      const fileSum = result.filePaths.length;
+      if (fileSum > 0) {
+        eStore.set('lastPath', getLastPath(result.filePaths[fileSum - 1]));
+      }
+
       // send file paths back to renderer
       return result.filePaths;
     } catch (err) {
@@ -80,11 +98,31 @@ const registerHandlers = (): void => {
             );
             rej(err);
           }
-          // added for development
-          // console.log(`lo: ${lo} / hi: ${hi} / random: ${n}`);
           res(n);
         });
       });
+    }
+  );
+
+  // handlers for electron-store
+  ipcMain.handle(
+    'getStore',
+    (
+      event: IpcMainInvokeEvent,
+      storeKey: keyof ValSettings
+    ): boolean | string | number => {
+      return eStore.get(storeKey);
+    }
+  );
+
+  ipcMain.handle(
+    'setStore',
+    (
+      event: IpcMainInvokeEvent,
+      storeKey: keyof ValSettings,
+      keyVal: boolean | number | string
+    ): void => {
+      eStore.set(storeKey, keyVal);
     }
   );
 };

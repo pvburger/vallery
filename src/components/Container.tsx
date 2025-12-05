@@ -8,9 +8,9 @@ export default function Container() {
   // state
   const [clipArray, setClipArray] = useState<string[]>([]);
   const [menuDisplay, setMenuDisplay] = useState(false);
-  const [randOrder, setRandOrder] = useState(true);
-  const [randStart, setRandStart] = useState(true);
-  const [autoStart, setAutoStart] = useState(true);
+  const [randOrder, setRandOrder] = useState(false);
+  const [randStart, setRandStart] = useState(false);
+  const [autoStart, setAutoStart] = useState(false);
   const [mute, setMute] = useState(true);
   const [vWidth, setVWidth] = useState(720);
 
@@ -26,6 +26,7 @@ export default function Container() {
   const randOrderControl = {
     get: () => randOrder,
     set: () => {
+      window.valleryAPI.setStoreVal('randOrder', !randOrder);
       setRandOrder(!randOrder);
     },
   };
@@ -33,6 +34,7 @@ export default function Container() {
   const randStartControl = {
     get: () => randStart,
     set: () => {
+      window.valleryAPI.setStoreVal('randStart', !randStart);
       setRandStart(!randStart);
     },
   };
@@ -40,6 +42,7 @@ export default function Container() {
   const autoStartControl = {
     get: () => autoStart,
     set: () => {
+      window.valleryAPI.setStoreVal('autoStart', !autoStart);
       setAutoStart(!autoStart);
     },
   };
@@ -47,6 +50,7 @@ export default function Container() {
   const muteControl = {
     get: () => mute,
     set: () => {
+      window.valleryAPI.setStoreVal('mute', !mute);
       setMute(!mute);
     },
   };
@@ -54,8 +58,31 @@ export default function Container() {
   const vWidthControl = {
     get: () => vWidth,
     set: (inp: number) => {
+      window.valleryAPI.setStoreVal('vWidth', inp);
       setVWidth(inp);
     },
+  };
+
+  const updateState = async (): Promise<void> => {
+    try {
+      // load saved settings from electron-store
+      const ranOrd = await window.valleryAPI.getStoreVal('randOrder');
+      const ranStar = await window.valleryAPI.getStoreVal('randStart');
+      const autoStar = await window.valleryAPI.getStoreVal('autoStart');
+      const mu = await window.valleryAPI.getStoreVal('mute');
+      const width = await window.valleryAPI.getStoreVal('vWidth');
+
+      // update state
+      setRandOrder(ranOrd);
+      setRandStart(ranStar);
+      setAutoStart(autoStar);
+      setMute(mu);
+      setVWidth(width);
+    } catch (err) {
+      console.log(
+        `There was a problem updating state with electron-store values: ${err}`
+      );
+    }
   };
 
   // shuffles an input array in place using Fisher-Yates shuffle
@@ -93,6 +120,10 @@ export default function Container() {
   //     console.log(`Item ${i}: ${clipArray[i]}`);
   //   }
   // }, [clipArray]);
+
+  useEffect(() => {
+    updateState();
+  }, []);
 
   return (
     <div className='mainContain'>

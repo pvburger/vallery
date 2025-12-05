@@ -1,7 +1,8 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import { VideoStats } from '../types';
 import fs from 'fs';
 import { stat } from 'fs/promises';
+import type { Request, Response } from 'express';
 
 export default function createServer() {
   const server = express();
@@ -17,7 +18,6 @@ export default function createServer() {
     try {
       const result = new VideoStats();
 
-      // this could be implemented asynchronously
       const vStats = await stat(inpPath);
 
       result.duration = vStats.size;

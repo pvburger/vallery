@@ -1,4 +1,4 @@
-import { MenuProps } from '../../types';
+import type { MenuProps } from '../../types';
 
 export default function Menu(props: MenuProps) {
   const { randOrder, randStart, autoStart, mute, vWidth } = props;
