@@ -1,4 +1,4 @@
-import { ButtonProp } from '../../types';
+import type { ButtonProp } from '../../types';
 
 export default function Button(props: ButtonProp) {
   const { label, runFun } = props;
