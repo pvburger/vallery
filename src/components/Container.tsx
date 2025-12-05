@@ -1,25 +1,18 @@
-import { useState /*, useEffect */ } from 'react';
+import { useState, useEffect } from 'react';
 import { VirtuosoGrid } from 'react-virtuoso';
 import Button from './Button';
 import Menu from './Menu';
 import VideoItem from './VideoItem';
 
-// load saved settings from electron-store
-const ranOrd = await window.valleryAPI.getStoreVal('randOrder');
-const ranStar = await window.valleryAPI.getStoreVal('randStart');
-const autoStar = await window.valleryAPI.getStoreVal('autoStart');
-const mu = await window.valleryAPI.getStoreVal('mute');
-const width = await window.valleryAPI.getStoreVal('vWidth');
-
 export default function Container() {
   // state
   const [clipArray, setClipArray] = useState<string[]>([]);
   const [menuDisplay, setMenuDisplay] = useState(false);
-  const [randOrder, setRandOrder] = useState(ranOrd);
-  const [randStart, setRandStart] = useState(ranStar);
-  const [autoStart, setAutoStart] = useState(autoStar);
-  const [mute, setMute] = useState(mu);
-  const [vWidth, setVWidth] = useState(width);
+  const [randOrder, setRandOrder] = useState(false);
+  const [randStart, setRandStart] = useState(false);
+  const [autoStart, setAutoStart] = useState(false);
+  const [mute, setMute] = useState(true);
+  const [vWidth, setVWidth] = useState(720);
 
   // wrappers
   const clearFileList = (): void => {
@@ -70,6 +63,28 @@ export default function Container() {
     },
   };
 
+  const updateState = async (): Promise<void> => {
+    try {
+      // load saved settings from electron-store
+      const ranOrd = await window.valleryAPI.getStoreVal('randOrder');
+      const ranStar = await window.valleryAPI.getStoreVal('randStart');
+      const autoStar = await window.valleryAPI.getStoreVal('autoStart');
+      const mu = await window.valleryAPI.getStoreVal('mute');
+      const width = await window.valleryAPI.getStoreVal('vWidth');
+
+      // update state
+      setRandOrder(ranOrd);
+      setRandStart(ranStar);
+      setAutoStart(autoStar);
+      setMute(mu);
+      setVWidth(width);
+    } catch (err) {
+      console.log(
+        `There was a problem updating state with electron-store values: ${err}`
+      );
+    }
+  };
+
   // shuffles an input array in place using Fisher-Yates shuffle
   // the comma after the generic is needed for parsing purposes
   const randomizeArr = async <T,>(inp: T[]): Promise<T[]> => {
@@ -105,6 +120,10 @@ export default function Container() {
   //     console.log(`Item ${i}: ${clipArray[i]}`);
   //   }
   // }, [clipArray]);
+
+  useEffect(() => {
+    updateState();
+  }, []);
 
   return (
     <div className='mainContain'>
