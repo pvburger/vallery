@@ -125,6 +125,15 @@ export default function Container() {
     updateState();
   }, []);
 
+  // check to see if mute is 'false'
+  // if so, checks to see if autoStart is 'true' and if so, toggles it to 'false'
+  // this is because browsers/electron do not support auto playing videos unless the sound is muted
+  useEffect(() => {
+    if (!mute) {
+      autoStart && setAutoStart(!autoStart);
+    }
+  }, [mute, autoStart]);
+
   return (
     <div className='mainContain'>
       <div className='headContain'>

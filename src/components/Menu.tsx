@@ -17,6 +17,7 @@ export default function Menu(props: MenuProps) {
   };
 
   // function to establish color for buttons
+  // REMOVE ONCE SLIDER IS IMPLEMENTED
   const getColor = (inp: boolean | number): string => {
     if (inp === true) return 'green';
     if (inp === false) return 'red';
