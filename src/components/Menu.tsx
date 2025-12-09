@@ -1,4 +1,5 @@
 import type { MenuProps } from '../../types';
+import Toggle from './Toggle';
 
 export default function Menu(props: MenuProps) {
   const { randOrder, randStart, autoStart, mute, vWidth } = props;
@@ -25,42 +26,32 @@ export default function Menu(props: MenuProps) {
   return (
     <div className='menus'>
       <div className='menuEntry'>
-        <button
-          className='toggle'
-          style={{ backgroundColor: getColor(randOrder.get()) }}
-          onClick={() => randOrder.set(!randOrder.get())}
-        ></button>
-        <p className='menuEntryTxt'>
-          Randomize Playback Order: {`${randOrder.get()}`}
-        </p>
+        <Toggle
+          togBool={randOrder.get()}
+          togFunction={() => randOrder.set(!randOrder.get())}
+        ></Toggle>
+        <p className='menuEntryTxt'>Randomize Playback Order</p>
       </div>
       <div className='menuEntry'>
-        <button
-          className='toggle'
-          style={{ backgroundColor: getColor(randStart.get()) }}
-          onClick={() => randStart.set(!randStart.get())}
-        ></button>
-        <p className='menuEntryTxt'>
-          Randomize Playback Start: {`${randStart.get()}`}
-        </p>
+        <Toggle
+          togBool={randStart.get()}
+          togFunction={() => randStart.set(!randStart.get())}
+        ></Toggle>
+        <p className='menuEntryTxt'>Randomize Playback Start</p>
       </div>
       <div className='menuEntry'>
-        <button
-          className='toggle'
-          style={{ backgroundColor: getColor(autoStart.get()) }}
-          onClick={() => autoStart.set(!autoStart.get())}
-        ></button>
-        <p className='menuEntryTxt'>
-          Auto Start Playback: {`${autoStart.get()}`}
-        </p>
+        <Toggle
+          togBool={autoStart.get()}
+          togFunction={() => autoStart.set(!autoStart.get())}
+        ></Toggle>
+        <p className='menuEntryTxt'>Auto Start Playback</p>
       </div>
       <div className='menuEntry'>
-        <button
-          className='toggle'
-          style={{ backgroundColor: getColor(mute.get()) }}
-          onClick={() => mute.set(!mute.get())}
-        ></button>
-        <p className='menuEntryTxt'>Mute: {`${mute.get()}`}</p>
+        <Toggle
+          togBool={mute.get()}
+          togFunction={() => mute.set(!mute.get())}
+        ></Toggle>
+        <p className='menuEntryTxt'>Mute</p>
       </div>
       <div className='menuEntry'>
         <button

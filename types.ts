@@ -43,6 +43,11 @@ export type VideoItemProps = {
   randStart: boolean;
 };
 
+export type ToggleProps = {
+  togBool: boolean;
+  togFunction: () => void;
+};
+
 export type ValSettings = {
   randOrder: boolean;
   randStart: boolean;
