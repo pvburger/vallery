@@ -56,3 +56,7 @@ export type ValSettings = {
   vWidth: number;
   lastPath: string;
 };
+
+export type SliderProps = {
+  stateMod: StateMod<number>;
+};
