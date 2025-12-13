@@ -3,6 +3,7 @@ import type { SliderProps } from 'types';
 
 export default function Slider(props: SliderProps) {
   const [sliderVal, setSliderVal] = useState(240);
+  const [drag, setDrag] = useState(false);
 
   const { stateMod } = props;
   const vWidthsArr = [240, 360, 480, 720, 960, 1280, 1440, 1920, 2880, 3840];
@@ -10,6 +11,33 @@ export default function Slider(props: SliderProps) {
   const vidResAsString = (val: number): string => {
     const vHeight = Math.ceil(val * (9 / 16));
     return `${val} x ${vHeight}`;
+  };
+
+  // creates tick mark elements for the slider
+  const tickGen = () => {
+    const tickArray = [];
+    let count = 1;
+
+    // for a given SORTED array (inp), calculates the percent of each value relative to the minimum and maximum values in the array, and returns a mapped array of those percentages
+    const calcPercent = (inp: number[]): number[] => {
+      const divisor = inp[inp.length - 1] - inp[0];
+      return inp.map((el) => ((el - inp[0]) / divisor) * 100);
+    };
+
+    const percentArray = calcPercent(vWidthsArr);
+
+    for (const element of percentArray) {
+      tickArray.push(
+        <div
+          className='tick'
+          id={`tick_${count}`}
+          style={{ left: `${element}%` }}
+        ></div>
+      );
+      count++;
+    }
+
+    return tickArray;
   };
 
   const change = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,6 +74,9 @@ export default function Slider(props: SliderProps) {
         newResolution = vWidthsArr[upperBoundIdx - 1];
       }
     }
+
+    setDrag(false);
+
     // reset slider to current vWidth
     setSliderVal(newResolution);
   };
@@ -57,16 +88,20 @@ export default function Slider(props: SliderProps) {
   return (
     <div className='sliderEntry'>
       <p className='sliderEntryTxt'>Video Size: {vidResAsString(sliderVal)}</p>
-      <input
-        type='range'
-        className='slider'
-        min={vWidthsArr[0]}
-        max={vWidthsArr[vWidthsArr.length - 1]}
-        step={20}
-        onChange={change}
-        onPointerUp={pointerUp}
-        value={sliderVal}
-      ></input>
+      <div className='sliderContain'>
+        <div className='tickContain'>{drag && tickGen()}</div>
+        <input
+          type='range'
+          className='slider'
+          min={vWidthsArr[0]}
+          max={vWidthsArr[vWidthsArr.length - 1]}
+          step={20}
+          onChange={change}
+          onPointerDown={() => setDrag(true)}
+          onPointerUp={pointerUp}
+          value={sliderVal}
+        ></input>
+      </div>
     </div>
   );
 }

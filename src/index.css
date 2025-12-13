@@ -27,7 +27,7 @@ body {
   border-color: green; */
   width: 100%;
   height: 100%;
-  background-color: black;
+  background-color: transparent;
 }
 
 .headContain {
@@ -57,7 +57,7 @@ body {
   border-width: 2px;
   border-color: #404040;
   border-radius: 1vh;
-  background-color: black;
+  background-color: transparent;
   font-size: 2.2vh;
   font-style: italic;
   font-weight: bold;
@@ -83,27 +83,11 @@ body {
 }
 
 .menuEntry {
-  /* margin-left: 1vw;
-  margin-top: 0.5vh; */
   padding-bottom: 1.5vh;
   font-size: 2.2vh;
   display: flex;
   flex-direction: row;
   align-items: center;
-}
-
-.sliderEntry {
-  margin-top: 2vw;
-  padding-bottom: 0.5vh;
-  font-size: 2.2vh;
-  display: flex;
-  flex-direction: column;
-  align-items: middle;
-}
-
-.sliderEntryTxt {
-  margin: 0;
-  margin-bottom: 0.5vh;
 }
 
 .toggle {
@@ -174,10 +158,54 @@ body {
   background-color: black;
 }
 
+.sliderEntry {
+  margin-top: 2vw;
+  padding-bottom: 0.5vh;
+  font-size: 2.2vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.sliderEntryTxt {
+  margin: 0;
+  margin-bottom: 0.5vh;
+}
+
 .slider {
   margin: 0;
   width: 100%;
-  background: #404040;
+  position: absolute;
+  z-index: 1;
+}
+
+.sliderContain {
+  height: 2vw;
+  position: relative;
+  overflow: hidden;
+}
+
+.tickContain {
+  margin: 0;
+  width: calc(100% - 2vw);
+  height: 0.4vw;
+  background: transparent;
+  position: absolute;
+  top: 0.8vw;
+  left: 0.8vw;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.tick {
+  margin: 0;
+  width: 0.4vw;
+  height: 0.4vw;
+  border: none;
+  border-radius: 0.2vw;
+  background: black;
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
 }
 
 input[type='range'] {
