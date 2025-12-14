@@ -26,6 +26,9 @@ createServer();
 // initialize electron-store
 const eStore = new Store({ schema });
 
+// dialogWindowIsOpen flag
+let dialogWindowIsOpen = false;
+
 const createWindow = async () => {
   // Get primary display size
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
@@ -58,6 +61,8 @@ const createWindow = async () => {
 const registerHandlers = (): void => {
   // Method to open file system dialog, get file list from user and return response to React
   ipcMain.handle('dialog:selectFiles', async (): Promise<string[]> => {
+    if (dialogWindowIsOpen) return [] as string[];
+    dialogWindowIsOpen = true; 
     try {
       const startPath = eStore.get('lastPath');
 
@@ -72,13 +77,16 @@ const registerHandlers = (): void => {
       const fileSum = result.filePaths.length;
       if (fileSum > 0) {
         eStore.set('lastPath', getLastPath(result.filePaths[fileSum - 1]));
+        // send file paths back to renderer
+        return result.filePaths;
+      } else {
+        return [] as string[];
       }
-
-      // send file paths back to renderer
-      return result.filePaths;
     } catch (err) {
       console.log(`There was an error retrieving the file list: ${err}`);
       return [] as string[];
+    } finally {
+      dialogWindowIsOpen=false;
     }
   });
 

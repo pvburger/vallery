@@ -101,13 +101,22 @@ export default function Container() {
   };
 
   const getFileList = async (): Promise<void> => {
+    const removeDupes = (inpArray: string[]): string[] => {
+      return [...new Set(inpArray)];
+    };
+
     try {
+      // appends any newly selected files to existing file list in clipArray state variable
       const clipArr = await window.valleryAPI.selectFiles();
 
-      if (randOrder) {
-        setClipArray(await randomizeArr(clipArr));
-      } else {
-        setClipArray(clipArr);
+      if (clipArr.length > 0) {
+        if (randOrder) {
+          setClipArray(
+            await randomizeArr(removeDupes([...clipArray, ...clipArr]))
+          );
+        } else {
+          setClipArray(removeDupes([...clipArray, ...clipArr]));
+        }
       }
     } catch (err) {
       console.log(`Whoopsie: ${err}`);
