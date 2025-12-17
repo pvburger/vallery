@@ -7,6 +7,11 @@ export default function Menu(props: MenuProps) {
   const [aspRatioInput, setAspectRatioInput] = useState<[number, number]>([
     16, 9,
   ]);
+  // STATE VARIABLES FOR DEVELOPMENT ONLY
+  const [vPortDims, setVPortDims] = useState<[number, number]>([
+    window.innerWidth,
+    window.innerHeight,
+  ]);
 
   const { randOrder, randStart, autoStart, mute, vWidth, aspRatio } = props;
 
@@ -23,8 +28,31 @@ export default function Menu(props: MenuProps) {
     }
   };
 
+  // DEVELOPMENT HELPER
+  const addVPortDims = () => {
+    const vpString = `VW: ${vPortDims[0]} / VH: ${vPortDims[1]}`;
+
+    return (
+      <div className='aspectEntry'>
+        <p className='aspectEntryTxt' style={{ color: '#404040' }}>
+          {vpString}
+        </p>
+      </div>
+    );
+  };
+
   useEffect(() => {
     setAspectRatioInput([...aspRatio.get()]);
+  }, []);
+
+  // USE FOR DEVELOPMENT ONLY
+  useEffect(() => {
+    const updVPortDims = () => {
+      setVPortDims([window.innerWidth, window.innerHeight]);
+    };
+
+    window.addEventListener('resize', updVPortDims);
+    return () => window.removeEventListener('resize', updVPortDims);
   }, []);
 
   return (
@@ -57,6 +85,7 @@ export default function Menu(props: MenuProps) {
         ></Toggle>
         <p className='menuEntryTxt'>Mute</p>
       </div>
+      {addVPortDims()}
       <div className='aspectEntry'>
         <p className='aspectEntryTxt'>Video Aspect Ratio:</p>
         <div className='aspectInputContain'>

@@ -90,14 +90,14 @@ body {
   align-items: center;
 }
 
-.toggle {
+/* .toggle {
   border-style: solid;
   border-width: 2px;
   border-color: #404040;
   border-radius: 1vw;
   width: 2vw;
   height: 2vw;
-}
+} */
 
 .menuEntryTxt {
   margin-top: 0;

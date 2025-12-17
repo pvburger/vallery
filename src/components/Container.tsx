@@ -181,7 +181,7 @@ export default function Container() {
       <div
         className='bodyContain'
         // UPDATE STYLING OF ALL ELEMENTS SO HEIGHT IS ALWAYS CALCULATED USING vh, THEN UPDATE BELOW
-        style={{ height: menuDisplay ? '88.5vh' : '88.5vh' }}
+        style={{ height: menuDisplay ? '25vh' : '88.5vh' }}
       >
         <VirtuosoGrid
           style={{ height: '100%' }}

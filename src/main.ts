@@ -58,7 +58,7 @@ const createWindow = async () => {
   }
 
   // open developer tools
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 };
 
 const registerHandlers = (): void => {
@@ -66,7 +66,7 @@ const registerHandlers = (): void => {
   ipcMain.handle('dialog:selectFiles', async (): Promise<string[]> => {
     // handle case in which a showOpenDialog window is already open
     if (dialogWindowIsOpen) return [] as string[];
-    
+
     dialogWindowIsOpen = true;
     try {
       const startPath = eStore.get('lastPath');
