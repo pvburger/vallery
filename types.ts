@@ -33,11 +33,13 @@ export type MenuProps = {
   autoStart: StateMod<boolean>;
   mute: StateMod<boolean>;
   vWidth: StateMod<number>;
+  aspRatio: StateMod<[number, number]>;
 };
 
 export type VideoItemProps = {
   path: string;
   vWidth: number;
+  aspRatio: [number, number];
   mute: boolean;
   autoStart: boolean;
   randStart: boolean;
@@ -54,9 +56,14 @@ export type ValSettings = {
   autoStart: boolean;
   mute: boolean;
   vWidth: number;
+  aspRatio: [number, number];
   lastPath: string;
 };
 
 export type SliderProps = {
   stateMod: StateMod<number>;
+  stateVar:string;
+  step: number;
+  label: string;
+  valArray: number[];
 };

@@ -23,6 +23,13 @@ export const schema: Schema<ValSettings> = {
     type: 'number',
     default: 720,
   },
+  aspRatio: {
+    type: 'array',
+    items: { type: 'number'},
+    minItems: 2,
+    maxItems: 2,
+    default: [16, 9],
+  },
   lastPath: {
     type: 'string',
     default: '',

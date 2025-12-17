@@ -26,6 +26,9 @@ createServer();
 // initialize electron-store
 const eStore = new Store({ schema });
 
+// FOR DEVELOPMENT ONLY
+// eStore.clear();
+
 // dialogWindowIsOpen flag
 let dialogWindowIsOpen = false;
 
@@ -61,8 +64,10 @@ const createWindow = async () => {
 const registerHandlers = (): void => {
   // Method to open file system dialog, get file list from user and return response to React
   ipcMain.handle('dialog:selectFiles', async (): Promise<string[]> => {
+    // handle case in which a showOpenDialog window is already open
     if (dialogWindowIsOpen) return [] as string[];
-    dialogWindowIsOpen = true; 
+    
+    dialogWindowIsOpen = true;
     try {
       const startPath = eStore.get('lastPath');
 
@@ -86,7 +91,7 @@ const registerHandlers = (): void => {
       console.log(`There was an error retrieving the file list: ${err}`);
       return [] as string[];
     } finally {
-      dialogWindowIsOpen=false;
+      dialogWindowIsOpen = false;
     }
   });
 
@@ -115,20 +120,20 @@ const registerHandlers = (): void => {
   // handlers for electron-store
   ipcMain.handle(
     'getStore',
-    (
+    <K extends keyof ValSettings>(
       event: IpcMainInvokeEvent,
-      storeKey: keyof ValSettings
-    ): boolean | string | number => {
-      return eStore.get(storeKey);
+      storeKey: K
+    ): ValSettings[K] => {
+      return eStore.get(storeKey) as ValSettings[K];
     }
   );
 
   ipcMain.handle(
     'setStore',
-    (
+    <K extends keyof ValSettings>(
       event: IpcMainInvokeEvent,
-      storeKey: keyof ValSettings,
-      keyVal: boolean | number | string
+      storeKey: K,
+      keyVal: ValSettings[K]
     ): void => {
       eStore.set(storeKey, keyVal);
     }

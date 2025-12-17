@@ -2,16 +2,16 @@ import { useState, useEffect } from 'react';
 import type { SliderProps } from 'types';
 
 export default function Slider(props: SliderProps) {
-  const [sliderVal, setSliderVal] = useState(240);
+  const [sliderVal, setSliderVal] = useState(0);
   const [drag, setDrag] = useState(false);
 
-  const { stateMod } = props;
-  const vWidthsArr = [240, 360, 480, 720, 960, 1280, 1440, 1920, 2880, 3840];
+  const { stateMod, stateVar, step, label, valArray } = props;
 
-  const vidResAsString = (val: number): string => {
-    const vHeight = Math.ceil(val * (9 / 16));
-    return `${val} x ${vHeight}`;
-  };
+  // REMOVE AFTER IMPLEMENTING ASPECT RATIO SLIDER
+  // const vidResAsString = (val: number): string => {
+  //   const vHeight = Math.ceil(val * (9 / 16));
+  //   return `${val} x ${vHeight}`;
+  // };
 
   // creates tick mark elements for the slider
   const tickGen = () => {
@@ -24,13 +24,13 @@ export default function Slider(props: SliderProps) {
       return inp.map((el) => ((el - inp[0]) / divisor) * 100);
     };
 
-    const percentArray = calcPercent(vWidthsArr);
+    const percentArray = calcPercent(valArray);
 
     for (const element of percentArray) {
       tickArray.push(
         <div
           className='tick'
-          id={`tick_${count}`}
+          key={`tick_${stateVar}-${count}`}
           style={{ left: `${element}%` }}
         ></div>
       );
@@ -46,39 +46,39 @@ export default function Slider(props: SliderProps) {
 
   const pointerUp = () => {
     let upperBoundIdx = 0;
-    let newResolution = vWidthsArr[0];
+    let newVal = valArray[0];
 
     /*
-    While binary search is generally faster for this type of functionality, given that the vWidthsArr only has 9 elements, and this will only run once when the user lets go of the mouse to reset the vWidth state variable, a linear search through the array for the first value greater than the input value makes the most sense 
+    While binary search is generally faster for this type of functionality, given that the valArray only has 9 elements, and this will only run once when the user lets go of the mouse to reset the relevant state variable, a linear search through the array for the first value greater than the input value makes the most sense 
     */
-    for (let i = 0; i < vWidthsArr.length; i++) {
-      if (vWidthsArr[i] >= sliderVal) {
+    for (let i = 0; i < valArray.length; i++) {
+      if (valArray[i] >= sliderVal) {
         upperBoundIdx = i;
         break;
       }
     }
 
-    // when sliderVal is equal to the lowest value in the vWidthsArr
+    // when sliderVal is equal to the lowest value in the valArray
     if (upperBoundIdx === 0) {
-      stateMod.set(vWidthsArr[0]);
+      stateMod.set(valArray[0]);
     } else {
-      // else, determine which vWidthsArr value is closer, vWidthsArr[i] or vWidthsArr[i-1]
+      // else, determine which valArray value is closer, valArray[i] or valArray[i-1]
       if (
-        Math.abs(vWidthsArr[upperBoundIdx] - sliderVal) <=
-        Math.abs(vWidthsArr[upperBoundIdx - 1] - sliderVal)
+        Math.abs(valArray[upperBoundIdx] - sliderVal) <=
+        Math.abs(valArray[upperBoundIdx - 1] - sliderVal)
       ) {
-        stateMod.set(vWidthsArr[upperBoundIdx]);
-        newResolution = vWidthsArr[upperBoundIdx];
+        stateMod.set(valArray[upperBoundIdx]);
+        newVal = valArray[upperBoundIdx];
       } else {
-        stateMod.set(vWidthsArr[upperBoundIdx - 1]);
-        newResolution = vWidthsArr[upperBoundIdx - 1];
+        stateMod.set(valArray[upperBoundIdx - 1]);
+        newVal = valArray[upperBoundIdx - 1];
       }
     }
 
     setDrag(false);
 
-    // reset slider to current vWidth
-    setSliderVal(newResolution);
+    // reset slider to current value of relevant state variable
+    setSliderVal(newVal);
   };
 
   useEffect(() => {
@@ -87,15 +87,15 @@ export default function Slider(props: SliderProps) {
 
   return (
     <div className='sliderEntry'>
-      <p className='sliderEntryTxt'>Video Size: {vidResAsString(sliderVal)}</p>
+      <p className='sliderEntryTxt'>{label}</p>
       <div className='sliderContain'>
         <div className='tickContain'>{drag && tickGen()}</div>
         <input
           type='range'
           className='slider'
-          min={vWidthsArr[0]}
-          max={vWidthsArr[vWidthsArr.length - 1]}
-          step={20}
+          min={valArray[0]}
+          max={valArray[valArray.length - 1]}
+          step={step}
           onChange={change}
           onPointerDown={() => setDrag(true)}
           onPointerUp={pointerUp}

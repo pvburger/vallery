@@ -13,6 +13,7 @@ export default function Container() {
   const [autoStart, setAutoStart] = useState(false);
   const [mute, setMute] = useState(true);
   const [vWidth, setVWidth] = useState(720);
+  const [aspRatio, setAspRatio] = useState<[number, number]>([16, 9]);
 
   // wrappers
   const clearFileList = (): void => {
@@ -63,6 +64,14 @@ export default function Container() {
     },
   };
 
+  const aspRatioControl = {
+    get: () => aspRatio,
+    set: (inp: [number, number]) => {
+      window.valleryAPI.setStoreVal('aspRatio', inp);
+      setAspRatio(inp);
+    },
+  };
+
   const updateState = async (): Promise<void> => {
     try {
       // load saved settings from electron-store
@@ -71,6 +80,7 @@ export default function Container() {
       const autoStar = await window.valleryAPI.getStoreVal('autoStart');
       const mu = await window.valleryAPI.getStoreVal('mute');
       const width = await window.valleryAPI.getStoreVal('vWidth');
+      const aRatio = await window.valleryAPI.getStoreVal('aspRatio');
 
       // update state
       setRandOrder(ranOrd);
@@ -78,6 +88,7 @@ export default function Container() {
       setAutoStart(autoStar);
       setMute(mu);
       setVWidth(width);
+      setAspRatio(aRatio);
     } catch (err) {
       console.log(
         `There was a problem updating state with electron-store values: ${err}`
@@ -163,10 +174,15 @@ export default function Container() {
             autoStart={autoStartControl}
             mute={muteControl}
             vWidth={vWidthControl}
+            aspRatio={aspRatioControl}
           ></Menu>
         </div>
       )}
-      <div className='bodyContain'>
+      <div
+        className='bodyContain'
+        // UPDATE STYLING OF ALL ELEMENTS SO HEIGHT IS ALWAYS CALCULATED USING vh, THEN UPDATE BELOW
+        style={{ height: menuDisplay ? '88.5vh' : '88.5vh' }}
+      >
         <VirtuosoGrid
           style={{ height: '100%' }}
           totalCount={clipArray.length}
@@ -176,6 +192,7 @@ export default function Container() {
             <VideoItem
               path={clipArray[index]}
               vWidth={vWidth}
+              aspRatio={aspRatio}
               mute={mute}
               autoStart={autoStart}
               randStart={randStart}

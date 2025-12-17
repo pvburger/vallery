@@ -1,10 +1,31 @@
 import type { MenuProps } from '../../types';
 import Toggle from './Toggle';
 import Slider from './Slider';
+import { useState, useEffect } from 'react';
 
 export default function Menu(props: MenuProps) {
-  const { randOrder, randStart, autoStart, mute, vWidth } = props;
+  const [aspRatioInput, setAspectRatioInput] = useState<[number, number]>([
+    16, 9,
+  ]);
 
+  const { randOrder, randStart, autoStart, mute, vWidth, aspRatio } = props;
+
+  const vWidthsArr = [240, 360, 480, 720, 960, 1280, 1440, 1920, 2880, 3840];
+
+  const changeAspectInp = (idx: 0 | 1, val: string): void => {
+    const currInput: [number, number] = [...aspRatioInput];
+
+    // convert val to number
+    const newVal = Number(val);
+    if (!isNaN(newVal)) {
+      currInput[idx] = newVal;
+      setAspectRatioInput(currInput);
+    }
+  };
+
+  useEffect(() => {
+    setAspectRatioInput([...aspRatio.get()]);
+  }, []);
 
   return (
     <div className='menus'>
@@ -36,8 +57,36 @@ export default function Menu(props: MenuProps) {
         ></Toggle>
         <p className='menuEntryTxt'>Mute</p>
       </div>
+      <div className='aspectEntry'>
+        <p className='aspectEntryTxt'>Video Aspect Ratio:</p>
+        <div className='aspectInputContain'>
+          <input
+            className='aspectInputBox'
+            type='text'
+            onChange={(e) => changeAspectInp(0, e.target.value)}
+            onBlur={() => {
+              aspRatio.set([...aspRatioInput]);
+            }}
+            value={`${aspRatioInput[0]}`}
+          ></input>
+          <p className='aspectEntryTxt'>:</p>
+          <input
+            className='aspectInputBox'
+            type='text'
+            onChange={(e) => changeAspectInp(1, e.target.value)}
+            onBlur={() => {
+              aspRatio.set([...aspRatioInput]);
+            }}
+            value={`${aspRatioInput[1]}`}
+          ></input>
+        </div>
+      </div>
       <Slider
         stateMod={vWidth}
+        stateVar={'vWidth'}
+        step={20}
+        label={`Video Resolution: ${vWidth.get()} x ${vWidth.get() / (aspRatio.get()[0] / aspRatio.get()[1])}`}
+        valArray={vWidthsArr}
       ></Slider>
     </div>
   );

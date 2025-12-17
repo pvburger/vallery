@@ -1,7 +1,7 @@
 import type { VideoItemProps } from '../../types';
 
 export default function VideoItem(props: VideoItemProps) {
-  const { path, vWidth, mute, autoStart, randStart } = props;
+  const { path, vWidth, aspRatio, mute, autoStart, randStart } = props;
 
   const srcAddress = `http://127.0.0.1:3333/video?path=${path}`;
   const lastSlash = path.lastIndexOf('/') + 1;
@@ -42,20 +42,19 @@ export default function VideoItem(props: VideoItemProps) {
   // all of the inline styling included below is crucial to proper function
   return (
     <div>
-      <div style={{ height: vWidth * (9 / 16) }}>
-        <video
-          src={srcAddress}
-          controls
-          width={vWidth}
-          muted={mute}
-          // audio playback must be muted for autoPlay to work
-          autoPlay={mute && autoStart}
-          loop={true}
-          preload='metadata'
-          onLoadedMetadata={(event) => handleMetadata(event)}
-          style={{ margin: 0 }}
-        ></video>
-      </div>
+      <video
+        src={srcAddress}
+        className='video'
+        controls
+        width={vWidth}
+        style={{ height: vWidth / (aspRatio[0] / aspRatio[1]), margin: 0 }}
+        muted={mute}
+        // audio playback must be muted for autoPlay to work
+        autoPlay={mute && autoStart}
+        loop={true}
+        preload='metadata'
+        onLoadedMetadata={(event) => handleMetadata(event)}
+      ></video>
       <p style={{ margin: 0, paddingTop: '5px' }}>{path.slice(lastSlash)}</p>
     </div>
   );
