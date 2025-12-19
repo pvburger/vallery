@@ -7,16 +7,11 @@ export default function Menu(props: MenuProps) {
   const [aspRatioInput, setAspectRatioInput] = useState<[number, number]>([
     16, 9,
   ]);
-  // STATE VARIABLES FOR DEVELOPMENT ONLY
-  const [vPortDims, setVPortDims] = useState<[number, number]>([
-    window.innerWidth,
-    window.innerHeight,
-  ]);
 
   const { randOrder, randStart, autoStart, mute, vWidth, aspRatio } = props;
-
   const vWidthsArr = [240, 360, 480, 720, 960, 1280, 1440, 1920, 2880, 3840];
 
+  // onChange for text input
   const changeAspectInp = (idx: 0 | 1, val: string): void => {
     const currInput: [number, number] = [...aspRatioInput];
 
@@ -28,48 +23,18 @@ export default function Menu(props: MenuProps) {
     }
   };
 
-  // DEVELOPMENT HELPER
-  const addVPortDims = () => {
-    const vpString = `VW: ${vPortDims[0]} / VH: ${vPortDims[1]}`;
-
-    return (
-      <div className='aspectEntry'>
-        <p className='aspectEntryTxt' style={{ color: '#404040' }}>
-          {vpString}
-        </p>
-      </div>
-    );
-  };
-
   useEffect(() => {
     setAspectRatioInput([...aspRatio.get()]);
-  }, []);
-
-  // USE FOR DEVELOPMENT ONLY
-  useEffect(() => {
-    const updVPortDims = () => {
-      setVPortDims([window.innerWidth, window.innerHeight]);
-    };
-
-    window.addEventListener('resize', updVPortDims);
-    return () => window.removeEventListener('resize', updVPortDims);
   }, []);
 
   return (
     <div className='menus'>
       <div className='menuEntry'>
         <Toggle
-          togBool={randOrder.get()}
-          togFunction={() => randOrder.set(!randOrder.get())}
+          togBool={mute.get()}
+          togFunction={() => mute.set(!mute.get())}
         ></Toggle>
-        <p className='menuEntryTxt'>Randomize Playback Order</p>
-      </div>
-      <div className='menuEntry'>
-        <Toggle
-          togBool={randStart.get()}
-          togFunction={() => randStart.set(!randStart.get())}
-        ></Toggle>
-        <p className='menuEntryTxt'>Randomize Playback Start</p>
+        <p className='menuEntryTxt'>Mute</p>
       </div>
       <div className='menuEntry'>
         <Toggle
@@ -80,25 +45,37 @@ export default function Menu(props: MenuProps) {
       </div>
       <div className='menuEntry'>
         <Toggle
-          togBool={mute.get()}
-          togFunction={() => mute.set(!mute.get())}
+          togBool={randStart.get()}
+          togFunction={() => randStart.set(!randStart.get())}
         ></Toggle>
-        <p className='menuEntryTxt'>Mute</p>
+        <p className='menuEntryTxt'>Randomize Playback Start</p>
       </div>
-      {addVPortDims()}
+      <div className='menuEntry'>
+        <Toggle
+          togBool={randOrder.get()}
+          togFunction={() => randOrder.set(!randOrder.get())}
+        ></Toggle>
+        <p className='menuEntryTxt'>Randomize Playback Order</p>
+      </div>
       <div className='aspectEntry'>
         <p className='aspectEntryTxt'>Video Aspect Ratio:</p>
         <div className='aspectInputContain'>
           <input
             className='aspectInputBox'
             type='text'
+            style={{ marginLeft: 0 }}
             onChange={(e) => changeAspectInp(0, e.target.value)}
             onBlur={() => {
               aspRatio.set([...aspRatioInput]);
             }}
             value={`${aspRatioInput[0]}`}
           ></input>
-          <p className='aspectEntryTxt'>:</p>
+          <p
+            className='aspectEntryTxt'
+            style={{ marginTop: 0, paddingBottom: 0 }}
+          >
+            :
+          </p>
           <input
             className='aspectInputBox'
             type='text'
@@ -114,8 +91,8 @@ export default function Menu(props: MenuProps) {
         stateMod={vWidth}
         stateVar={'vWidth'}
         step={20}
-        label={`Video Resolution: ${vWidth.get()} x ${vWidth.get() / (aspRatio.get()[0] / aspRatio.get()[1])}`}
         valArray={vWidthsArr}
+        misc={aspRatio.get()[0] / aspRatio.get()[1]}
       ></Slider>
     </div>
   );

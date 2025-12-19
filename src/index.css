@@ -65,15 +65,11 @@ body {
   letter-spacing: 1px;
   width: 25vw;
   height: 4vh;
-  /* display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center; */
 }
 
 .menus {
   margin: 0;
-  padding: 1vw;
+  padding: 2vh;
   border-style: solid;
   border-width: 2px;
   border-color: #404040;
@@ -89,15 +85,6 @@ body {
   flex-direction: row;
   align-items: center;
 }
-
-/* .toggle {
-  border-style: solid;
-  border-width: 2px;
-  border-color: #404040;
-  border-radius: 1vw;
-  width: 2vw;
-  height: 2vw;
-} */
 
 .menuEntryTxt {
   margin-top: 0;
@@ -144,12 +131,12 @@ body {
 
 .togglePill {
   margin: 0;
-  padding-left: 0.2vw;
-  padding-right: 0.2vw;
-  height: 2vw;
-  width: 3.2vw;
+  padding-left: 0.3vh;
+  padding-right: 0.3vh;
+  height: 3vh;
+  width: 5vh;
   border: none;
-  border-radius: 1vw;
+  border-radius: 1.5vh;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -157,56 +144,25 @@ body {
 
 .toggleThumb {
   margin: 0;
-  height: 1.6vw;
-  width: 1.6vw;
+  height: 2.4vh;
+  width: 2.4vh;
   border: none;
-  border-radius: 0.8vw;
+  border-radius: 1.2vh;
   background-color: black;
 }
 
-.sliderEntry {
-  margin-top: 2vw;
-  padding-bottom: 0.5vh;
-  font-size: 2.2vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.sliderEntryTxt {
-  margin: 0;
-  margin-bottom: 0.5vh;
-}
-
-.slider {
-  margin: 0;
-  width: 100%;
-  position: absolute;
-  z-index: 1;
-}
-
-.sliderContain {
-  height: 2vw;
-  position: relative;
-  overflow: hidden;
-}
-
 .aspectEntry {
-  margin-top: 2vw;
-  padding-bottom: 0.5vh;
+  margin-top: 0.5vh;
+  padding-bottom: 1.5vh;
   font-size: 2.2vh;
-  /* display: flex;
-  flex-direction: column; */
 }
 
 .aspectEntryTxt {
   margin: 0;
-  margin-left: 0.5vw;
-  margin-right: 0.5vw;
+  padding-bottom: 0.5vh;
 }
 
 .aspectInputContain {
-  margin: 0;
-  padding: 0;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -214,6 +170,8 @@ body {
 
 .aspectInputBox {
   margin: 0;
+  margin-left: 1vw;
+  margin-right: 1vw;
   width: 8vh;
   height: 4vh;
   font-size: 2.2vh;
@@ -226,24 +184,50 @@ body {
   border-radius: 1vh;
 }
 
+.sliderEntry {
+  /* margin-top: 0.5vh; */
+  /* padding-bottom: ; */
+  font-size: 2.2vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.sliderEntryTxt {
+  margin: 0;
+  padding-bottom: 0.5vh;
+}
+
+.slider {
+  margin: 0;
+  width: 100%;
+  position: absolute;
+  z-index: 1;
+}
+
+.sliderContain {
+  height: 3vh;
+  position: relative;
+  overflow: hidden;
+}
+
 .tickContain {
   margin: 0;
-  width: calc(100% - 2vw);
-  height: 0.4vw;
+  width: calc(100% - 3vh);
+  height: 0.4vh;
   background: transparent;
   position: absolute;
-  top: 0.8vw;
-  left: 0.8vw;
+  top: 1.3vh;
+  left: 1.3vh;
   z-index: 2;
   pointer-events: none;
 }
 
 .tick {
   margin: 0;
-  width: 0.4vw;
-  height: 0.4vw;
+  width: 0.4vh;
+  height: 0.4vh;
   border: none;
-  border-radius: 0.2vw;
+  border-radius: 0.2vh;
   background: black;
   position: absolute;
   z-index: 3;
@@ -261,20 +245,20 @@ input[type='range']::-webkit-slider-runnable-track {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 2vw;
-  padding-left: 0.2vw;
-  padding-right: 0.2vw;
+  height: 3vh;
+  padding-left: 0.3vh;
+  padding-right: 0.3vh;
   background: #007dff;
-  border-radius: 1vw;
+  border-radius: 1.5vh;
 }
 
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  margin-top: 0.2vw;
-  height: 1.6vw;
-  width: 1.6vw;
+  margin-top: 0.3vh;
+  height: 2.4vh;
+  width: 2.4vh;
   border: none;
-  border-radius: 0.8vw;
+  border-radius: 1.2vh;
   background: black;
 }

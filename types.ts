@@ -62,8 +62,9 @@ export type ValSettings = {
 
 export type SliderProps = {
   stateMod: StateMod<number>;
-  stateVar:string;
+  stateVar: string;
   step: number;
-  label: string;
+  label?: string;
   valArray: number[];
+  misc: number;
 };

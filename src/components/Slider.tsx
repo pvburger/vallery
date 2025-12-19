@@ -4,14 +4,32 @@ import type { SliderProps } from 'types';
 export default function Slider(props: SliderProps) {
   const [sliderVal, setSliderVal] = useState(0);
   const [drag, setDrag] = useState(false);
+  // // STATE VARIABLES FOR DEVELOPMENT ONLY
+  // const [vPortDims, setVPortDims] = useState<[number, number]>([
+  //   window.innerWidth,
+  //   window.innerHeight,
+  // ]);
 
-  const { stateMod, stateVar, step, label, valArray } = props;
+  const { stateMod, stateVar, step, valArray, misc } = props;
 
-  // REMOVE AFTER IMPLEMENTING ASPECT RATIO SLIDER
-  // const vidResAsString = (val: number): string => {
-  //   const vHeight = Math.ceil(val * (9 / 16));
-  //   return `${val} x ${vHeight}`;
+  // // DEVELOPMENT MODE
+  // const devMode = true;
+
+  // // label maker for range input title (development)
+  // const labelMakerDev = (): string => {
+  //   if (drag) {
+  //     return `Video Resolution: ${sliderVal} x ${Math.ceil(sliderVal / misc)}____Viewport Size: ${vPortDims[0]} x ${vPortDims[1]}`;
+  //   }
+  //   return `Video Resolution: ${stateMod.get()} x ${Math.ceil(stateMod.get() / misc)}____Viewport Size: ${vPortDims[0]} x ${vPortDims[1]}`;
   // };
+
+  // label maker for range input title (production)
+  const labelMakerProd = (): string => {
+    if (drag) {
+      return `Video Resolution: ${sliderVal} x ${Math.ceil(sliderVal / misc)}`;
+    }
+    return `Video Resolution: ${stateMod.get()} x ${Math.ceil(stateMod.get() / misc)}`;
+  };
 
   // creates tick mark elements for the slider
   const tickGen = () => {
@@ -40,6 +58,7 @@ export default function Slider(props: SliderProps) {
     return tickArray;
   };
 
+  // onChange for range input
   const change = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSliderVal(Number(event.target.value));
   };
@@ -85,9 +104,19 @@ export default function Slider(props: SliderProps) {
     setSliderVal(stateMod.get());
   }, []);
 
+  // // USE FOR DEVELOPMENT ONLY
+  // useEffect(() => {
+  //   const updVPortDims = () => {
+  //     setVPortDims([window.innerWidth, window.innerHeight]);
+  //   };
+
+  //   window.addEventListener('resize', updVPortDims);
+  //   return () => window.removeEventListener('resize', updVPortDims);
+  // }, []);
+
   return (
     <div className='sliderEntry'>
-      <p className='sliderEntryTxt'>{label}</p>
+      <p className='sliderEntryTxt'>{labelMakerProd()}</p>
       <div className='sliderContain'>
         <div className='tickContain'>{drag && tickGen()}</div>
         <input
