@@ -11,16 +11,10 @@ contextBridge.exposeInMainWorld('valleryAPI', {
   getRandomNum: async (lo: number, hi: number): Promise<number> => {
     return await ipcRenderer.invoke('getRandom', lo, hi);
   },
-  // in the following getters and setters, 'K' is a generic key, while ValSettings[K] is the type associated with the value of the generic key
-  getStoreVal: async <K extends keyof ValSettings>(
-    storeKey: K
-  ): Promise<ValSettings[K]> => {
-    return await ipcRenderer.invoke('getStore', storeKey);
+  getSettingsObj: async (): Promise<ValSettings> => {
+    return await ipcRenderer.invoke('getStoreObj');
   },
-  setStoreVal: async <K extends keyof ValSettings>(
-    storeKey: K,
-    keyVal: ValSettings[K]
-  ) => {
-    await ipcRenderer.invoke('setStore', storeKey, keyVal);
+  setSettingsObj: async (settingsObj: ValSettings) => {
+    await ipcRenderer.invoke('setStoreObj', settingsObj);
   },
 });

@@ -20,7 +20,7 @@ export default function Slider(props: SliderProps) {
   //   if (drag) {
   //     return `Video Resolution: ${sliderVal} x ${Math.ceil(sliderVal / misc)}____Viewport Size: ${vPortDims[0]} x ${vPortDims[1]}`;
   //   }
-  //   return `Video Resolution: ${stateMod.get()} x ${Math.ceil(stateMod.get() / misc)}____Viewport Size: ${vPortDims[0]} x ${vPortDims[1]}`;
+  //   return `Video Resolution: ${stateMod.val} x ${Math.ceil(stateMod.val / misc)}____Viewport Size: ${vPortDims[0]} x ${vPortDims[1]}`;
   // };
 
   // label maker for range input title (production)
@@ -28,7 +28,7 @@ export default function Slider(props: SliderProps) {
     if (drag) {
       return `Video Resolution: ${sliderVal} x ${Math.ceil(sliderVal / misc)}`;
     }
-    return `Video Resolution: ${stateMod.get()} x ${Math.ceil(stateMod.get() / misc)}`;
+    return `Video Resolution: ${stateMod.val} x ${Math.ceil(stateMod.val / misc)}`;
   };
 
   // creates tick mark elements for the slider
@@ -101,8 +101,8 @@ export default function Slider(props: SliderProps) {
   };
 
   useEffect(() => {
-    setSliderVal(stateMod.get());
-  }, []);
+    setSliderVal(stateMod.val);
+  }, [stateMod.val]);
 
   // // USE FOR DEVELOPMENT ONLY
   // useEffect(() => {

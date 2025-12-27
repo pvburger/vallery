@@ -185,8 +185,6 @@ body {
 }
 
 .sliderEntry {
-  /* margin-top: 0.5vh; */
-  /* padding-bottom: ; */
   font-size: 2.2vh;
   display: flex;
   flex-direction: column;

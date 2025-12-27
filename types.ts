@@ -23,7 +23,7 @@ export class VideoStats {
 }
 
 export type StateMod<T> = {
-  get(): T;
+  val: T;
   set(inp: T): void;
 };
 

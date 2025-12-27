@@ -37,13 +37,8 @@ declare global {
     valleryAPI: {
       selectFiles: () => Promise<string[]>;
       getRandomNum: (lo: number, hi: number) => Promise<number>;
-      getStoreVal: <K extends keyof ValSettings>(
-        storeKey: K
-      ) => Promise<ValSettings[K]>;
-      setStoreVal: <K extends keyof ValSettings>(
-        storeKey: K,
-        keyVal: ValSettings[K]
-      ) => void;
+      getSettingsObj: () => Promise<ValSettings>;
+      setSettingsObj: (settingsObj: ValSettings) => void;
     };
   }
 }

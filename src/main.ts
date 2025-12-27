@@ -26,9 +26,6 @@ createServer();
 // initialize electron-store
 const eStore = new Store({ schema });
 
-// FOR DEVELOPMENT ONLY
-// eStore.clear();
-
 // dialogWindowIsOpen flag
 let dialogWindowIsOpen = false;
 
@@ -58,7 +55,7 @@ const createWindow = async () => {
   }
 
   // open developer tools
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 };
 
 const registerHandlers = (): void => {
@@ -118,24 +115,28 @@ const registerHandlers = (): void => {
   );
 
   // handlers for electron-store
-  ipcMain.handle(
-    'getStore',
-    <K extends keyof ValSettings>(
-      event: IpcMainInvokeEvent,
-      storeKey: K
-    ): ValSettings[K] => {
-      return eStore.get(storeKey) as ValSettings[K];
-    }
-  );
+  ipcMain.handle('getStoreObj', (): ValSettings => {
+    return {
+      randOrder: eStore.get('randOrder'),
+      randStart: eStore.get('randStart'),
+      autoStart: eStore.get('autoStart'),
+      mute: eStore.get('mute'),
+      vWidth: eStore.get('vWidth'),
+      aspRatio: eStore.get('aspRatio') as [number, number],
+      lastPath: eStore.get('lastPath'),
+    };
+  });
 
   ipcMain.handle(
-    'setStore',
-    <K extends keyof ValSettings>(
-      event: IpcMainInvokeEvent,
-      storeKey: K,
-      keyVal: ValSettings[K]
-    ): void => {
-      eStore.set(storeKey, keyVal);
+    'setStoreObj',
+    (event: IpcMainInvokeEvent, settingsObj: ValSettings): void => {
+      eStore.set('randOrder', settingsObj.randOrder);
+      eStore.set('randStart', settingsObj.randStart);
+      eStore.set('autoStart', settingsObj.autoStart);
+      eStore.set('mute', settingsObj.mute);
+      eStore.set('vWidth', settingsObj.vWidth);
+      eStore.set('aspRatio', settingsObj.aspRatio);
+      // 'lastPath' property is set by 'dialog:selectFiles' handler
     }
   );
 };

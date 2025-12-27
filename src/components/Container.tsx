@@ -11,9 +11,10 @@ export default function Container() {
   const [randOrder, setRandOrder] = useState(false);
   const [randStart, setRandStart] = useState(false);
   const [autoStart, setAutoStart] = useState(false);
-  const [mute, setMute] = useState(true);
+  const [mute, setMute] = useState(false);
   const [vWidth, setVWidth] = useState(720);
   const [aspRatio, setAspRatio] = useState<[number, number]>([16, 9]);
+  const [stateLoaded, setStateLoaded] = useState(false);
 
   // wrappers
   const clearFileList = (): void => {
@@ -21,74 +22,66 @@ export default function Container() {
   };
 
   const toggleMenu = (): void => {
-    setMenuDisplay(!menuDisplay);
+    setMenuDisplay((prev) => !prev);
   };
 
   const randOrderControl = {
-    get: () => randOrder,
+    val: randOrder,
     set: () => {
-      window.valleryAPI.setStoreVal('randOrder', !randOrder);
-      setRandOrder(!randOrder);
+      setRandOrder((prev) => !prev);
     },
   };
 
   const randStartControl = {
-    get: () => randStart,
+    val: randStart,
     set: () => {
-      window.valleryAPI.setStoreVal('randStart', !randStart);
-      setRandStart(!randStart);
+      setRandStart((prev) => !prev);
     },
   };
 
   const autoStartControl = {
-    get: () => autoStart,
+    val: autoStart,
     set: () => {
-      window.valleryAPI.setStoreVal('autoStart', !autoStart);
-      setAutoStart(!autoStart);
+      setAutoStart((prev) => !prev);
     },
   };
 
   const muteControl = {
-    get: () => mute,
+    val: mute,
     set: () => {
-      window.valleryAPI.setStoreVal('mute', !mute);
-      setMute(!mute);
+      setMute((prev) => !prev);
     },
   };
 
   const vWidthControl = {
-    get: () => vWidth,
+    val: vWidth,
     set: (inp: number) => {
-      window.valleryAPI.setStoreVal('vWidth', inp);
       setVWidth(inp);
     },
   };
 
   const aspRatioControl = {
-    get: () => aspRatio,
+    val: aspRatio,
     set: (inp: [number, number]) => {
-      window.valleryAPI.setStoreVal('aspRatio', inp);
       setAspRatio(inp);
     },
   };
 
   const updateState = async (): Promise<void> => {
+    // // use for debugging
+    // console.log('Initialize state');
     try {
       // load saved settings from electron-store
-      const ranOrd = await window.valleryAPI.getStoreVal('randOrder');
-      const ranStar = await window.valleryAPI.getStoreVal('randStart');
-      const autoStar = await window.valleryAPI.getStoreVal('autoStart');
-      const mu = await window.valleryAPI.getStoreVal('mute');
-      const width = await window.valleryAPI.getStoreVal('vWidth');
-      const aRatio = await window.valleryAPI.getStoreVal('aspRatio');
+      const settingsObj = await window.valleryAPI.getSettingsObj();
 
       // update state
-      setRandOrder(ranOrd);
-      setRandStart(ranStar);
-      setAutoStart(autoStar);
-      setMute(mu);
-      setVWidth(width);
-      setAspRatio(aRatio);
+      setRandOrder(settingsObj.randOrder);
+      setRandStart(settingsObj.randStart);
+      setAutoStart(settingsObj.autoStart);
+      setMute(settingsObj.mute);
+      setAspRatio(settingsObj.aspRatio);
+      setVWidth(settingsObj.vWidth);
+      setStateLoaded(true);
     } catch (err) {
       console.log(
         `There was a problem updating state with electron-store values: ${err}`
@@ -145,12 +138,29 @@ export default function Container() {
     updateState();
   }, []);
 
+  useEffect(() => {
+    if (stateLoaded) {
+      // // use for debugging
+      // console.log('Settings changed; updating Electron-Store');
+
+      window.valleryAPI.setSettingsObj({
+        randOrder: randOrder,
+        randStart: randStart,
+        autoStart: autoStart,
+        mute: mute,
+        vWidth: vWidth,
+        aspRatio: [...aspRatio],
+        lastPath: '',
+      });
+    }
+  }, [randOrder, randStart, autoStart, mute, vWidth, aspRatio]);
+
   // check to see if mute is 'false'
   // if so, checks to see if autoStart is 'true' and if so, toggles it to 'false'
   // this is because browsers/electron do not support auto playing videos unless the sound is muted
   useEffect(() => {
     if (!mute) {
-      autoStart && setAutoStart(!autoStart);
+      autoStart && setAutoStart((prev) => !prev);
     }
   }, [mute, autoStart]);
 
