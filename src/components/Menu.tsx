@@ -59,7 +59,7 @@ export default function Menu(props: MenuProps) {
       setVWidthsIdx(currIdx);
     }
 
-    // check and adjust vWidthsArr as needed
+    // check and swap vWidthsArr as needed
     if (aspRatio.val[0] >= aspRatio.val[1]) {
       setVWidthsArr(landscapeArr);
     } else {
@@ -68,6 +68,8 @@ export default function Menu(props: MenuProps) {
         landscapeArr.map((el) => el * (aspRatio.val[0] / aspRatio.val[1]))
       );
     }
+
+    // update aspect ratio input box and set aspectLoaded flag
     setAspectRatioInput([...aspRatio.val]);
     setAspectLoaded(true);
   }, [aspRatio]);
@@ -79,6 +81,8 @@ export default function Menu(props: MenuProps) {
 
       vWidth.set(vWidthsArr[vWidthsIdx]);
     }
+
+    // reset flag
     setAspectLoaded(false);
   }, [aspectLoaded]);
 

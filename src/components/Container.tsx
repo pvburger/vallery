@@ -5,7 +5,7 @@ import Menu from './Menu';
 import VideoItem from './VideoItem';
 
 export default function Container() {
-  // state
+
   const [clipArray, setClipArray] = useState<string[]>([]);
   const [menuDisplay, setMenuDisplay] = useState(false);
   const [randOrder, setRandOrder] = useState(false);
@@ -106,6 +106,7 @@ export default function Container() {
 
   const getFileList = async (): Promise<void> => {
     const removeDupes = (inpArray: string[]): string[] => {
+      // remove duplicates by converting array to set and back again...
       return [...new Set(inpArray)];
     };
 
@@ -157,7 +158,7 @@ export default function Container() {
 
   // check to see if mute is 'false'
   // if so, checks to see if autoStart is 'true' and if so, toggles it to 'false'
-  // this is because browsers/electron do not support auto playing videos unless the sound is muted
+  // Chromium browsers/electron do not support auto playing videos unless the sound is muted
   useEffect(() => {
     if (!mute) {
       autoStart && setAutoStart((prev) => !prev);
