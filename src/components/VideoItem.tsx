@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import type { VideoItemProps } from '../../types';
 
 export default function VideoItem(props: VideoItemProps) {
@@ -5,6 +6,9 @@ export default function VideoItem(props: VideoItemProps) {
 
   const srcAddress = `http://127.0.0.1:3333/video?path=${path}`;
   const lastSlash = path.lastIndexOf('/') + 1;
+
+  // establish variable to hold reference to <video> element for later teardown
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   // used to enable random start of video playback
   const handleMetadata = async (
@@ -39,11 +43,27 @@ export default function VideoItem(props: VideoItemProps) {
     return (await window.valleryAPI.getRandomNum(lo, hi)) / 1000;
   };
 
+  useEffect(() => {
+    const thisVid = videoRef.current;
+
+    // cleanup function to ensure expediant reallocation of resources
+    return () => {
+      // if <VideoItem> unmounts before ref is created
+      if (!thisVid) return;
+
+      thisVid.pause();
+      thisVid.removeAttribute('src');
+      thisVid.load();
+    };
+  }, []);
+
   // all of the inline styling included below is crucial to proper function
   return (
     <div>
       <video
         src={srcAddress}
+        // update videoRef.current to refer to this element
+        ref={videoRef}
         className='video'
         controls
         width={vWidth}
