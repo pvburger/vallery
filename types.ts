@@ -70,6 +70,5 @@ export type SliderProps = {
   vWidth: number;
   vWidthSet: (inp: number) => void;
   step: number;
-  valArray: number[];
   aspRatio: [number, number];
 };

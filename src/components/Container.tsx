@@ -117,13 +117,15 @@ export default function Container() {
   // }, [clipArray]);
 
   useEffect(() => {
+    // use for debugging
+    console.log('Container: Initializing state');
     updateState();
   }, []);
 
   useEffect(() => {
     if (stateLoaded) {
-      // // use for debugging
-      // console.log('Settings changed; updating Electron-Store');
+      // use for debugging
+      console.log('Container: Updating Electron-Store');
 
       window.valleryAPI.setSettingsObj({
         randOrder: randOrder,
@@ -141,6 +143,9 @@ export default function Container() {
   // if so, checks to see if autoStart is 'true' and if so, toggles it to 'false'
   // Chromium browsers/electron do not support auto playing videos unless the sound is muted
   useEffect(() => {
+    // use for debugging
+    console.log('Container: Checking mute status to determine autoStart state');
+
     if (!mute) {
       autoStart && setAutoStart((prev) => !prev);
     }

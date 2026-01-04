@@ -1,16 +1,22 @@
 import { useState, useEffect } from 'react';
 import type { SliderProps } from 'types';
 
+const landscapeArr = [240, 352, 480, 720, 960, 1280, 1440, 1920, 2880, 3840];
+
 export default function Slider(props: SliderProps) {
   const [sliderVal, setSliderVal] = useState(0);
   const [drag, setDrag] = useState(false);
+  const [valArray, setValArray] = useState(landscapeArr);
+  const [valArrayIdx, setValArrayIdx] = useState(-1);
+  const [initialized, setInitialized] = useState(false);
+
   // // STATE VARIABLES FOR DEVELOPMENT ONLY
   // const [vPortDims, setVPortDims] = useState<[number, number]>([
   //   window.innerWidth,
   //   window.innerHeight,
   // ]);
 
-  const { vWidth, vWidthSet, step, valArray, aspRatio } = props;
+  const { vWidth, vWidthSet, step, aspRatio } = props;
 
   // // DEVELOPMENT MODE
   // const devMode = true;
@@ -26,9 +32,9 @@ export default function Slider(props: SliderProps) {
   // label maker for range input title (production)
   const labelMakerProd = (): string => {
     if (drag) {
-      return `Video Resolution: ${sliderVal} x ${Math.ceil(sliderVal / (aspRatio[0]/aspRatio[1]))}`;
+      return `Video Resolution: ${sliderVal} x ${Math.ceil(sliderVal / (aspRatio[0] / aspRatio[1]))}`;
     }
-    return `Video Resolution: ${vWidth} x ${Math.ceil(vWidth / (aspRatio[0]/aspRatio[1]))}`;
+    return `Video Resolution: ${vWidth} x ${Math.ceil(vWidth / (aspRatio[0] / aspRatio[1]))}`;
   };
 
   // creates tick mark elements for the slider
@@ -100,9 +106,60 @@ export default function Slider(props: SliderProps) {
     setSliderVal(newVal);
   };
 
+  // useEffect helper to get valArrayIdx
+  const getIdx = (inp: number[]): number => {
+    // set index of current horizontal resolution in vWidthsArr
+    let currIdx = inp.indexOf(vWidth);
+
+    if (currIdx === -1) {
+      console.log(
+        'Error getting index of current horizontal resolution value in vWidthArr'
+      );
+      currIdx = 0;
+    }
+    return currIdx;
+  };
+
+  // useEffect helper to set valArray
+  const pickValArray = (): number[] => {
+    let newValArray = [...landscapeArr];
+
+    // check and modify vWidthsArr as needed
+    if (aspRatio[0] < aspRatio[1]) {
+      newValArray = landscapeArr.map((el) => el * (aspRatio[0] / aspRatio[1]));
+    }
+    return newValArray;
+  };
+
   useEffect(() => {
+    // use for debugging
+    console.log('Slider: Initializing...');
+
+    // get relevant valArray
+    const newArray = pickValArray();
+
+    // update state variables
+    setValArrayIdx(getIdx(newArray));
+    setValArray(newArray);
     setSliderVal(vWidth);
-  }, [vWidth]);
+    setInitialized(true);
+  }, []);
+
+  useEffect(() => {
+    if (!initialized) return;
+
+    // use for debugging
+    console.log('Slider: Aspect ratio has changed; updating state');
+
+    // get relevant valArray
+    const newArray = pickValArray();
+
+    // update state variables
+    setValArray(newArray);
+    // reset vWidth after valArray change...
+    vWidthSet(newArray[valArrayIdx]);
+    setSliderVal(newArray[valArrayIdx]);
+  }, [initialized, aspRatio]);
 
   // // USE FOR DEVELOPMENT ONLY
   // useEffect(() => {
