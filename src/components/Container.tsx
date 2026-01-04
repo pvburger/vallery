@@ -5,7 +5,6 @@ import Menu from './Menu';
 import VideoItem from './VideoItem';
 
 export default function Container() {
-
   const [clipArray, setClipArray] = useState<string[]>([]);
   const [menuDisplay, setMenuDisplay] = useState(false);
   const [randOrder, setRandOrder] = useState(false);
@@ -25,46 +24,28 @@ export default function Container() {
     setMenuDisplay((prev) => !prev);
   };
 
-  const randOrderControl = {
-    val: randOrder,
-    set: () => {
-      setRandOrder((prev) => !prev);
-    },
+  const randOrderSet = () => {
+    setRandOrder((prev) => !prev);
   };
 
-  const randStartControl = {
-    val: randStart,
-    set: () => {
-      setRandStart((prev) => !prev);
-    },
+  const randStartSet = () => {
+    setRandStart((prev) => !prev);
   };
 
-  const autoStartControl = {
-    val: autoStart,
-    set: () => {
-      setAutoStart((prev) => !prev);
-    },
+  const autoStartSet = () => {
+    setAutoStart((prev) => !prev);
   };
 
-  const muteControl = {
-    val: mute,
-    set: () => {
-      setMute((prev) => !prev);
-    },
+  const muteSet = () => {
+    setMute((prev) => !prev);
   };
 
-  const vWidthControl = {
-    val: vWidth,
-    set: (inp: number) => {
-      setVWidth(inp);
-    },
+  const vWidthSet = (inp: number) => {
+    setVWidth(inp);
   };
 
-  const aspRatioControl = {
-    val: aspRatio,
-    set: (inp: [number, number]) => {
-      setAspRatio(inp);
-    },
+  const aspRatioSet = (inp: [number, number]) => {
+    setAspRatio(inp);
   };
 
   const updateState = async (): Promise<void> => {
@@ -180,12 +161,18 @@ export default function Container() {
       {menuDisplay && (
         <div className='menuContain'>
           <Menu
-            randOrder={randOrderControl}
-            randStart={randStartControl}
-            autoStart={autoStartControl}
-            mute={muteControl}
-            vWidth={vWidthControl}
-            aspRatio={aspRatioControl}
+            randOrder={randOrder}
+            randOrderSet={randOrderSet}
+            randStart={randStart}
+            randStartSet={randStartSet}
+            autoStart={autoStart}
+            autoStartSet={autoStartSet}
+            mute={mute}
+            muteSet={muteSet}
+            vWidth={vWidth}
+            vWidthSet={vWidthSet}
+            aspRatio={aspRatio}
+            aspRatioSet={aspRatioSet}
           ></Menu>
         </div>
       )}

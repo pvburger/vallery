@@ -13,7 +13,20 @@ export default function Menu(props: MenuProps) {
   const [vWidthsIdx, setVWidthsIdx] = useState(3);
   const [aspectLoaded, setAspectLoaded] = useState(false);
 
-  const { randOrder, randStart, autoStart, mute, vWidth, aspRatio } = props;
+  const {
+    randOrder,
+    randOrderSet,
+    randStart,
+    randStartSet,
+    autoStart,
+    autoStartSet,
+    mute,
+    muteSet,
+    vWidth,
+    vWidthSet,
+    aspRatio,
+    aspRatioSet,
+  } = props;
 
   // // debugger
   // const debooger = (inp: string): void => {
@@ -21,8 +34,8 @@ export default function Menu(props: MenuProps) {
   //   console.log('.');
   //   console.log(`========================================`);
   //   console.log(`Event: ${inp}`);
-  //   console.log(`vWidth: ${vWidth.val}`);
-  //   console.log(`aspRatio: ${aspRatio.val}`);
+  //   console.log(`vWidth: ${vWidth}`);
+  //   console.log(`aspRatio: ${aspRatio}`);
   //   console.log(`vWidthsArr: ${vWidthsArr}`);
   //   console.log(`aspectRatioInput: ${aspRatioInput}`);
   //   console.log(`vWidthsIdx: ${vWidthsIdx}`);
@@ -48,7 +61,7 @@ export default function Menu(props: MenuProps) {
     // debooger('menu_start');
 
     // set index of current horizontal resolution in vWidthsArr
-    const currIdx = vWidthsArr.indexOf(vWidth.val);
+    const currIdx = vWidthsArr.indexOf(vWidth);
 
     if (currIdx === -1) {
       console.log(
@@ -60,17 +73,15 @@ export default function Menu(props: MenuProps) {
     }
 
     // check and swap vWidthsArr as needed
-    if (aspRatio.val[0] >= aspRatio.val[1]) {
+    if (aspRatio[0] >= aspRatio[1]) {
       setVWidthsArr(landscapeArr);
     } else {
       // if aspect ratio is portrait (ie, height > width), recalculate vWidthsArr
-      setVWidthsArr(
-        landscapeArr.map((el) => el * (aspRatio.val[0] / aspRatio.val[1]))
-      );
+      setVWidthsArr(landscapeArr.map((el) => el * (aspRatio[0] / aspRatio[1])));
     }
 
     // update aspect ratio input box and set aspectLoaded flag
-    setAspectRatioInput([...aspRatio.val]);
+    setAspectRatioInput([...aspRatio]);
     setAspectLoaded(true);
   }, [aspRatio]);
 
@@ -79,7 +90,7 @@ export default function Menu(props: MenuProps) {
       // // use for debugging
       // debooger('calculate slider index and reset vWidth for new range');
 
-      vWidth.set(vWidthsArr[vWidthsIdx]);
+      vWidthSet(vWidthsArr[vWidthsIdx]);
     }
 
     // reset flag
@@ -89,30 +100,27 @@ export default function Menu(props: MenuProps) {
   return (
     <div className='menus'>
       <div className='menuEntry'>
-        <Toggle
-          togBool={mute.val}
-          togFunction={() => mute.set(!mute.val)}
-        ></Toggle>
+        <Toggle togBool={mute} togFunction={() => muteSet()}></Toggle>
         <p className='menuEntryTxt'>Mute</p>
       </div>
       <div className='menuEntry'>
         <Toggle
-          togBool={autoStart.val}
-          togFunction={() => autoStart.set(!autoStart.val)}
+          togBool={autoStart}
+          togFunction={() => autoStartSet()}
         ></Toggle>
         <p className='menuEntryTxt'>Auto Start Playback</p>
       </div>
       <div className='menuEntry'>
         <Toggle
-          togBool={randStart.val}
-          togFunction={() => randStart.set(!randStart.val)}
+          togBool={randStart}
+          togFunction={() => randStartSet()}
         ></Toggle>
         <p className='menuEntryTxt'>Randomize Playback Start</p>
       </div>
       <div className='menuEntry'>
         <Toggle
-          togBool={randOrder.val}
-          togFunction={() => randOrder.set(!randOrder.val)}
+          togBool={randOrder}
+          togFunction={() => randOrderSet()}
         ></Toggle>
         <p className='menuEntryTxt'>Randomize Playback Order</p>
       </div>
@@ -125,7 +133,7 @@ export default function Menu(props: MenuProps) {
             style={{ marginLeft: 0 }}
             onChange={(e) => changeAspectInp(0, e.target.value)}
             onBlur={() => {
-              aspRatio.set([...aspRatioInput]);
+              aspRatioSet([...aspRatioInput]);
             }}
             value={`${aspRatioInput[0]}`}
           ></input>
@@ -140,18 +148,22 @@ export default function Menu(props: MenuProps) {
             type='text'
             onChange={(e) => changeAspectInp(1, e.target.value)}
             onBlur={() => {
-              aspRatio.set([...aspRatioInput]);
+              aspRatioSet([...aspRatioInput]);
             }}
             value={`${aspRatioInput[1]}`}
           ></input>
         </div>
       </div>
       <Slider
-        stateMod={vWidth}
-        stateVar={'vWidth'}
+        // stateMod={vWidth}
+        vWidth = {vWidth}
+        vWidthSet = {vWidthSet}
+        // stateVar={'vWidth'}
         step={20}
-        valArray={[...vWidthsArr]}
-        misc={aspRatio.val[0] / aspRatio.val[1]}
+        // valArray={[...vWidthsArr]}
+        valArray={vWidthsArr}
+        // misc={aspRatio[0] / aspRatio[1]}
+        aspRatio = {aspRatio}
       ></Slider>
     </div>
   );

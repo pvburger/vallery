@@ -28,12 +28,18 @@ export type StateMod<T> = {
 };
 
 export type MenuProps = {
-  randOrder: StateMod<boolean>;
-  randStart: StateMod<boolean>;
-  autoStart: StateMod<boolean>;
-  mute: StateMod<boolean>;
-  vWidth: StateMod<number>;
-  aspRatio: StateMod<[number, number]>;
+  randOrder: boolean;
+  randOrderSet: () => void;
+  randStart: boolean;
+  randStartSet: () => void;
+  autoStart: boolean;
+  autoStartSet: () => void;
+  mute: boolean;
+  muteSet: () => void;
+  vWidth: number;
+  vWidthSet: (inp: number) => void;
+  aspRatio: [number, number];
+  aspRatioSet: (inp: [number, number]) => void;
 };
 
 export type VideoItemProps = {
@@ -61,10 +67,9 @@ export type ValSettings = {
 };
 
 export type SliderProps = {
-  stateMod: StateMod<number>;
-  stateVar: string;
+  vWidth: number;
+  vWidthSet: (inp: number) => void;
   step: number;
-  label?: string;
   valArray: number[];
-  misc: number;
+  aspRatio: [number, number];
 };

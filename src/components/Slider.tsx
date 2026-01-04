@@ -10,7 +10,7 @@ export default function Slider(props: SliderProps) {
   //   window.innerHeight,
   // ]);
 
-  const { stateMod, stateVar, step, valArray, misc } = props;
+  const { vWidth, vWidthSet, step, valArray, aspRatio } = props;
 
   // // DEVELOPMENT MODE
   // const devMode = true;
@@ -18,17 +18,17 @@ export default function Slider(props: SliderProps) {
   // // label maker for range input title (development)
   // const labelMakerDev = (): string => {
   //   if (drag) {
-  //     return `Video Resolution: ${sliderVal} x ${Math.ceil(sliderVal / misc)}____Viewport Size: ${vPortDims[0]} x ${vPortDims[1]}`;
+  //     return `Video Resolution: ${sliderVal} x ${Math.ceil(sliderVal / (aspRatio[0]/aspRatio[1]))}____Viewport Size: ${vPortDims[0]} x ${vPortDims[1]}`;
   //   }
-  //   return `Video Resolution: ${stateMod.val} x ${Math.ceil(stateMod.val / misc)}____Viewport Size: ${vPortDims[0]} x ${vPortDims[1]}`;
+  //   return `Video Resolution: ${vWidth} x ${Math.ceil(vWidth / (aspRatio[0]/aspRatio[1]))}____Viewport Size: ${vPortDims[0]} x ${vPortDims[1]}`;
   // };
 
   // label maker for range input title (production)
   const labelMakerProd = (): string => {
     if (drag) {
-      return `Video Resolution: ${sliderVal} x ${Math.ceil(sliderVal / misc)}`;
+      return `Video Resolution: ${sliderVal} x ${Math.ceil(sliderVal / (aspRatio[0]/aspRatio[1]))}`;
     }
-    return `Video Resolution: ${stateMod.val} x ${Math.ceil(stateMod.val / misc)}`;
+    return `Video Resolution: ${vWidth} x ${Math.ceil(vWidth / (aspRatio[0]/aspRatio[1]))}`;
   };
 
   // creates tick mark elements for the slider
@@ -48,7 +48,7 @@ export default function Slider(props: SliderProps) {
       tickArray.push(
         <div
           className='tick'
-          key={`tick_${stateVar}-${count}`}
+          key={`tick_vWidth-${count}`}
           style={{ left: `${element}%` }}
         ></div>
       );
@@ -79,17 +79,17 @@ export default function Slider(props: SliderProps) {
 
     // when sliderVal is equal to the lowest value in the valArray
     if (upperBoundIdx === 0) {
-      stateMod.set(valArray[0]);
+      vWidthSet(valArray[0]);
     } else {
       // else, determine which valArray value is closer, valArray[i] or valArray[i-1]
       if (
         Math.abs(valArray[upperBoundIdx] - sliderVal) <=
         Math.abs(valArray[upperBoundIdx - 1] - sliderVal)
       ) {
-        stateMod.set(valArray[upperBoundIdx]);
+        vWidthSet(valArray[upperBoundIdx]);
         newVal = valArray[upperBoundIdx];
       } else {
-        stateMod.set(valArray[upperBoundIdx - 1]);
+        vWidthSet(valArray[upperBoundIdx - 1]);
         newVal = valArray[upperBoundIdx - 1];
       }
     }
@@ -101,8 +101,8 @@ export default function Slider(props: SliderProps) {
   };
 
   useEffect(() => {
-    setSliderVal(stateMod.val);
-  }, [stateMod.val]);
+    setSliderVal(vWidth);
+  }, [vWidth]);
 
   // // USE FOR DEVELOPMENT ONLY
   // useEffect(() => {
