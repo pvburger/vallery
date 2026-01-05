@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { VirtuosoGrid } from 'react-virtuoso';
+import { ValSettingsUI } from '../../types';
 import Button from './Button';
 import Menu from './Menu';
 import VideoItem from './VideoItem';
@@ -7,13 +8,8 @@ import VideoItem from './VideoItem';
 export default function Container() {
   const [clipArray, setClipArray] = useState<string[]>([]);
   const [menuDisplay, setMenuDisplay] = useState(false);
-  const [randOrder, setRandOrder] = useState(false);
-  const [randStart, setRandStart] = useState(false);
-  const [autoStart, setAutoStart] = useState(false);
-  const [mute, setMute] = useState(false);
-  const [vWidth, setVWidth] = useState(720);
-  const [aspRatio, setAspRatio] = useState<[number, number]>([16, 9]);
   const [stateLoaded, setStateLoaded] = useState(false);
+  const [userSettings, setUserSettings] = useState(new ValSettingsUI());
 
   // wrappers
   const clearFileList = (): void => {
@@ -25,27 +21,27 @@ export default function Container() {
   };
 
   const randOrderSet = () => {
-    setRandOrder((prev) => !prev);
+    setUserSettings((prev) => ({ ...prev, randOrder: !prev.randOrder }));
   };
 
   const randStartSet = () => {
-    setRandStart((prev) => !prev);
+    setUserSettings((prev) => ({ ...prev, randStart: !prev.randStart }));
   };
 
   const autoStartSet = () => {
-    setAutoStart((prev) => !prev);
+    setUserSettings((prev) => ({ ...prev, autoStart: !prev.autoStart }));
   };
 
   const muteSet = () => {
-    setMute((prev) => !prev);
+    setUserSettings((prev) => ({ ...prev, mute: !prev.mute }));
   };
 
   const vWidthSet = (inp: number) => {
-    setVWidth(inp);
+    setUserSettings((prev) => ({ ...prev, vWidth: inp }));
   };
 
   const aspRatioSet = (inp: [number, number]) => {
-    setAspRatio(inp);
+    setUserSettings((prev) => ({ ...prev, aspRatio: inp }));
   };
 
   const updateState = async (): Promise<void> => {
@@ -56,12 +52,7 @@ export default function Container() {
       const settingsObj = await window.valleryAPI.getSettingsObj();
 
       // update state
-      setRandOrder(settingsObj.randOrder);
-      setRandStart(settingsObj.randStart);
-      setAutoStart(settingsObj.autoStart);
-      setMute(settingsObj.mute);
-      setAspRatio(settingsObj.aspRatio);
-      setVWidth(settingsObj.vWidth);
+      setUserSettings(settingsObj);
       setStateLoaded(true);
     } catch (err) {
       console.log(
@@ -96,7 +87,7 @@ export default function Container() {
       const clipArr = await window.valleryAPI.selectFiles();
 
       if (clipArr.length > 0) {
-        if (randOrder) {
+        if (userSettings.randOrder) {
           setClipArray(
             await randomizeArr(removeDupes([...clipArray, ...clipArr]))
           );
@@ -127,17 +118,16 @@ export default function Container() {
       // use for debugging
       console.log('Container: Updating Electron-Store');
 
-      window.valleryAPI.setSettingsObj({
-        randOrder: randOrder,
-        randStart: randStart,
-        autoStart: autoStart,
-        mute: mute,
-        vWidth: vWidth,
-        aspRatio: [...aspRatio],
-        lastPath: '',
-      });
+      window.valleryAPI.setSettingsObj(userSettings);
     }
-  }, [randOrder, randStart, autoStart, mute, vWidth, aspRatio]);
+  }, [
+    userSettings.randOrder,
+    userSettings.randStart,
+    userSettings.autoStart,
+    userSettings.mute,
+    userSettings.vWidth,
+    userSettings.aspRatio,
+  ]);
 
   // check to see if mute is 'false'
   // if so, checks to see if autoStart is 'true' and if so, toggles it to 'false'
@@ -146,10 +136,10 @@ export default function Container() {
     // use for debugging
     console.log('Container: Checking mute status to determine autoStart state');
 
-    if (!mute) {
-      autoStart && setAutoStart((prev) => !prev);
+    if (!userSettings.mute) {
+      userSettings.autoStart && autoStartSet();
     }
-  }, [mute, autoStart]);
+  }, [userSettings.mute, userSettings.autoStart]);
 
   return (
     <div className='mainContain'>
@@ -166,17 +156,17 @@ export default function Container() {
       {menuDisplay && (
         <div className='menuContain'>
           <Menu
-            randOrder={randOrder}
+            randOrder={userSettings.randOrder}
             randOrderSet={randOrderSet}
-            randStart={randStart}
+            randStart={userSettings.randStart}
             randStartSet={randStartSet}
-            autoStart={autoStart}
+            autoStart={userSettings.autoStart}
             autoStartSet={autoStartSet}
-            mute={mute}
+            mute={userSettings.mute}
             muteSet={muteSet}
-            vWidth={vWidth}
+            vWidth={userSettings.vWidth}
             vWidthSet={vWidthSet}
-            aspRatio={aspRatio}
+            aspRatio={userSettings.aspRatio}
             aspRatioSet={aspRatioSet}
           ></Menu>
         </div>
@@ -193,11 +183,11 @@ export default function Container() {
           itemContent={(index) => (
             <VideoItem
               path={clipArray[index]}
-              vWidth={vWidth}
-              aspRatio={aspRatio}
-              mute={mute}
-              autoStart={autoStart}
-              randStart={randStart}
+              vWidth={userSettings.vWidth}
+              aspRatio={userSettings.aspRatio}
+              mute={userSettings.mute}
+              autoStart={userSettings.autoStart}
+              randStart={userSettings.randStart}
             />
           )}
         ></VirtuosoGrid>

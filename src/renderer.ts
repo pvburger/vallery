@@ -28,7 +28,7 @@
 
 import './index.css';
 import './components/App';
-import type { ValSettings } from 'types';
+import type { ValSettingsUI } from 'types';
 
 // Declare exposed API
 declare global {
@@ -37,8 +37,8 @@ declare global {
     valleryAPI: {
       selectFiles: () => Promise<string[]>;
       getRandomNum: (lo: number, hi: number) => Promise<number>;
-      getSettingsObj: () => Promise<ValSettings>;
-      setSettingsObj: (settingsObj: ValSettings) => void;
+      getSettingsObj: () => Promise<ValSettingsUI>;
+      setSettingsObj: (settingsObj: ValSettingsUI) => void;
     };
   }
 }

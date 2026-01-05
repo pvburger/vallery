@@ -8,7 +8,7 @@ import crypto from 'crypto';
 import Store from 'electron-store';
 import { schema } from './store';
 import { getLastPath } from './utils';
-import type { ValSettings } from 'types';
+import type { ValSettingsUI } from 'types';
 import type { IpcMainInvokeEvent } from 'electron';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -115,7 +115,7 @@ const registerHandlers = (): void => {
   );
 
   // handlers for electron-store
-  ipcMain.handle('getStoreObj', (): ValSettings => {
+  ipcMain.handle('getStoreObj', (): ValSettingsUI => {
     return {
       randOrder: eStore.get('randOrder'),
       randStart: eStore.get('randStart'),
@@ -123,13 +123,13 @@ const registerHandlers = (): void => {
       mute: eStore.get('mute'),
       vWidth: eStore.get('vWidth'),
       aspRatio: eStore.get('aspRatio') as [number, number],
-      lastPath: eStore.get('lastPath'),
+      // lastPath: eStore.get('lastPath'),
     };
   });
 
   ipcMain.handle(
     'setStoreObj',
-    (event: IpcMainInvokeEvent, settingsObj: ValSettings): void => {
+    (event: IpcMainInvokeEvent, settingsObj: ValSettingsUI): void => {
       eStore.set('randOrder', settingsObj.randOrder);
       eStore.set('randStart', settingsObj.randStart);
       eStore.set('autoStart', settingsObj.autoStart);

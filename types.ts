@@ -56,15 +56,32 @@ export type ToggleProps = {
   togFunction: () => void;
 };
 
-export type ValSettings = {
+export class ValSettingsUI {
   randOrder: boolean;
   randStart: boolean;
   autoStart: boolean;
   mute: boolean;
   vWidth: number;
   aspRatio: [number, number];
+
+  constructor() {
+    this.randOrder = false;
+    this.randStart = false;
+    this.autoStart = false;
+    this.mute = false;
+    this.vWidth = 720;
+    this.aspRatio = [16, 9];
+  }
+}
+
+export class ValSettings extends ValSettingsUI {
   lastPath: string;
-};
+
+  constructor() {
+    super();
+    this.lastPath = '';
+  }
+}
 
 export type SliderProps = {
   vWidth: number;
