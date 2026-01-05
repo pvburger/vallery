@@ -1,6 +1,7 @@
 import type { MenuProps } from '../../types';
 import Toggle from './Toggle';
 import Slider from './Slider';
+import Button from './Button';
 import { useState, useEffect } from 'react';
 
 export default function Menu(props: MenuProps) {
@@ -60,21 +61,38 @@ export default function Menu(props: MenuProps) {
 
   return (
     <div className='menus'>
-      <div className='menuEntry'>
-        <Toggle togBool={mute} togFunction={() => muteSet()}></Toggle>
-        <p className='menuEntryTxt'>Mute</p>
-      </div>
-      <div className='menuEntry'>
-        <Toggle togBool={autoStart} togFunction={() => autoStartSet()}></Toggle>
-        <p className='menuEntryTxt'>Auto Start Playback</p>
-      </div>
-      <div className='menuEntry'>
-        <Toggle togBool={randStart} togFunction={() => randStartSet()}></Toggle>
-        <p className='menuEntryTxt'>Randomize Playback Start</p>
-      </div>
-      <div className='menuEntry'>
-        <Toggle togBool={randOrder} togFunction={() => randOrderSet()}></Toggle>
-        <p className='menuEntryTxt'>Randomize Playback Order</p>
+      <div className='menuEntryContain'>
+        <div>
+          <div className='menuEntry'>
+            <Toggle togBool={mute} togFunction={() => muteSet()}></Toggle>
+            <p className='menuEntryTxt'>Mute</p>
+          </div>
+          <div className='menuEntry'>
+            <Toggle
+              togBool={autoStart}
+              togFunction={() => autoStartSet()}
+            ></Toggle>
+            <p className='menuEntryTxt'>Auto Start Playback</p>
+          </div>
+          <div className='menuEntry'>
+            <Toggle
+              togBool={randStart}
+              togFunction={() => randStartSet()}
+            ></Toggle>
+            <p className='menuEntryTxt'>Randomize Playback Start</p>
+          </div>
+          <div className='menuEntry'>
+            <Toggle
+              togBool={randOrder}
+              togFunction={() => randOrderSet()}
+            ></Toggle>
+            <p className='menuEntryTxt'>Randomize Playback Order</p>
+          </div>
+        </div>
+        <Button
+          label='RESET'
+          runFun={() => console.log('Insert Function...')}
+        ></Button>
       </div>
       <div className='aspectEntry'>
         <p className='aspectEntryTxt'>Video Aspect Ratio:</p>
