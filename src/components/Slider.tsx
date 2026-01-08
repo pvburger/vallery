@@ -1,14 +1,10 @@
 import { useState, useEffect } from 'react';
 import type { SliderProps } from 'types';
 
-const landscapeArr = [240, 352, 480, 720, 960, 1280, 1440, 1920, 2880, 3840];
-
 export default function Slider(props: SliderProps) {
   const [sliderVal, setSliderVal] = useState(0);
   const [drag, setDrag] = useState(false);
-  const [valArray, setValArray] = useState(landscapeArr);
-  const [valArrayIdx, setValArrayIdx] = useState(-1);
-  const [initialized, setInitialized] = useState(false);
+  const [label, setLabel] = useState('');
 
   // // STATE VARIABLES FOR DEVELOPMENT ONLY
   // const [vPortDims, setVPortDims] = useState<[number, number]>([
@@ -16,7 +12,7 @@ export default function Slider(props: SliderProps) {
   //   window.innerHeight,
   // ]);
 
-  const { vWidth, vWidthSet, step, aspRatio } = props;
+  const { vWidth, vWidthSet, vWidthArray, step, aspRatio } = props;
 
   // // DEVELOPMENT MODE
   // const devMode = true;
@@ -29,14 +25,6 @@ export default function Slider(props: SliderProps) {
   //   return `Video Resolution: ${vWidth} x ${Math.ceil(vWidth / (aspRatio[0]/aspRatio[1]))}____Viewport Size: ${vPortDims[0]} x ${vPortDims[1]}`;
   // };
 
-  // label maker for range input title (production)
-  const labelMakerProd = (): string => {
-    if (drag) {
-      return `Video Resolution: ${sliderVal} x ${Math.ceil(sliderVal / (aspRatio[0] / aspRatio[1]))}`;
-    }
-    return `Video Resolution: ${vWidth} x ${Math.ceil(vWidth / (aspRatio[0] / aspRatio[1]))}`;
-  };
-
   // creates tick mark elements for the slider
   const tickGen = () => {
     const tickArray = [];
@@ -48,7 +36,7 @@ export default function Slider(props: SliderProps) {
       return inp.map((el) => ((el - inp[0]) / divisor) * 100);
     };
 
-    const percentArray = calcPercent(valArray);
+    const percentArray = calcPercent(vWidthArray);
 
     for (const element of percentArray) {
       tickArray.push(
@@ -67,99 +55,58 @@ export default function Slider(props: SliderProps) {
   // onChange for range input
   const change = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSliderVal(Number(event.target.value));
+    setLabel(
+      `Video Resolution: ${sliderVal} x ${Math.ceil(sliderVal / (aspRatio[0] / aspRatio[1]))}`
+    );
   };
 
+  // what happens when user lets go of mouse button
   const pointerUp = () => {
     let upperBoundIdx = 0;
-    let newVal = valArray[0];
+    let newVal = vWidthArray[0];
 
     /*
-    While binary search is generally faster for this type of functionality, given that the valArray only has 9 elements, and this will only run once when the user lets go of the mouse to reset the relevant state variable, a linear search through the array for the first value greater than the input value makes the most sense 
+    While binary search is generally faster for this type of functionality, given that the vWidthArray only has 9 elements, and this will only run once when the user lets go of the mouse to reset the relevant state variable, a linear search through the array for the first value greater than the input value makes the most sense 
     */
-    for (let i = 0; i < valArray.length; i++) {
-      if (valArray[i] >= sliderVal) {
+    for (let i = 0; i < vWidthArray.length; i++) {
+      if (vWidthArray[i] >= sliderVal) {
         upperBoundIdx = i;
         break;
       }
     }
 
-    // when sliderVal is equal to the lowest value in the valArray
+    // when sliderVal is equal to the lowest value in the vWidthArray
     if (upperBoundIdx === 0) {
-      vWidthSet(valArray[0]);
+      setSliderVal(newVal);
+      vWidthSet(newVal);
     } else {
-      // else, determine which valArray value is closer, valArray[i] or valArray[i-1]
+      // else, determine which vWidthArray value is closer, vWidthArray[i] or vWidthArray[i-1]
       if (
-        Math.abs(valArray[upperBoundIdx] - sliderVal) <=
-        Math.abs(valArray[upperBoundIdx - 1] - sliderVal)
+        Math.abs(vWidthArray[upperBoundIdx] - sliderVal) <=
+        Math.abs(vWidthArray[upperBoundIdx - 1] - sliderVal)
       ) {
-        vWidthSet(valArray[upperBoundIdx]);
-        newVal = valArray[upperBoundIdx];
+        newVal = vWidthArray[upperBoundIdx];
       } else {
-        vWidthSet(valArray[upperBoundIdx - 1]);
-        newVal = valArray[upperBoundIdx - 1];
+        newVal = vWidthArray[upperBoundIdx - 1];
       }
+      setSliderVal(newVal);
+      vWidthSet(newVal);
     }
-
     setDrag(false);
-
-    // reset slider to current value of relevant state variable
-    setSliderVal(newVal);
-  };
-
-  // useEffect helper to get valArrayIdx
-  const getIdx = (inp: number[]): number => {
-    // set index of current horizontal resolution in vWidthsArr
-    let currIdx = inp.indexOf(vWidth);
-
-    if (currIdx === -1) {
-      console.log(
-        'Error getting index of current horizontal resolution value in vWidthArr'
-      );
-      currIdx = 0;
-    }
-    return currIdx;
-  };
-
-  // useEffect helper to set valArray
-  const pickValArray = (): number[] => {
-    let newValArray = [...landscapeArr];
-
-    // check and modify vWidthsArr as needed
-    if (aspRatio[0] < aspRatio[1]) {
-      newValArray = landscapeArr.map((el) => el * (aspRatio[0] / aspRatio[1]));
-    }
-    return newValArray;
+    setLabel(
+      `Video Resolution: ${newVal} x ${Math.ceil(newVal / (aspRatio[0] / aspRatio[1]))}`
+    );
   };
 
   useEffect(() => {
     // use for debugging
     console.log('Slider: Initializing...');
 
-    // get relevant valArray
-    const newArray = pickValArray();
-
-    // update state variables
-    setValArrayIdx(getIdx(newArray));
-    setValArray(newArray);
     setSliderVal(vWidth);
-    setInitialized(true);
-  }, []);
-
-  useEffect(() => {
-    if (!initialized) return;
-
-    // use for debugging
-    console.log('Slider: Aspect ratio has changed; updating state');
-
-    // get relevant valArray
-    const newArray = pickValArray();
-
-    // update state variables
-    setValArray(newArray);
-    // reset vWidth after valArray change...
-    vWidthSet(newArray[valArrayIdx]);
-    setSliderVal(newArray[valArrayIdx]);
-  }, [initialized, aspRatio]);
+    setLabel(
+      `Video Resolution: ${vWidth} x ${Math.ceil(vWidth / (aspRatio[0] / aspRatio[1]))}`
+    );
+  }, [aspRatio, vWidthArray]);
 
   // // USE FOR DEVELOPMENT ONLY
   // useEffect(() => {
@@ -173,14 +120,14 @@ export default function Slider(props: SliderProps) {
 
   return (
     <div className='sliderEntry'>
-      <p className='sliderEntryTxt'>{labelMakerProd()}</p>
+      <p className='sliderEntryTxt'>{label}</p>
       <div className='sliderContain'>
         <div className='tickContain'>{drag && tickGen()}</div>
         <input
           type='range'
           className='slider'
-          min={valArray[0]}
-          max={valArray[valArray.length - 1]}
+          min={vWidthArray[0]}
+          max={vWidthArray[vWidthArray.length - 1]}
           step={step}
           onChange={change}
           onPointerDown={() => setDrag(true)}

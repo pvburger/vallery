@@ -1,13 +1,13 @@
-import type { MenuProps } from '../../types';
+import { ValSettingsUI, type MenuProps } from '../../types';
 import Toggle from './Toggle';
 import Slider from './Slider';
 import Button from './Button';
 import { useState, useEffect } from 'react';
 
 export default function Menu(props: MenuProps) {
-  const [aspRatioInput, setAspectRatioInput] = useState<[number, number]>([
-    16, 9,
-  ]);
+  const [aspRatioInput, setAspectRatioInput] = useState(
+    () => new ValSettingsUI().aspRatio
+  );
 
   const {
     randOrder,
@@ -20,6 +20,8 @@ export default function Menu(props: MenuProps) {
     muteSet,
     vWidth,
     vWidthSet,
+    vWidthArray,
+    vWidthArraySet,
     aspRatio,
     aspRatioSet,
   } = props;
@@ -52,12 +54,51 @@ export default function Menu(props: MenuProps) {
     }
   };
 
-  // use for debugging
+  // useEffect helper to get vWidthArrayIdx
+  const getIdx = (inp: number[]): number => {
+    // set index of current horizontal resolution in vWidthsArr
+    let currIdx = inp.indexOf(vWidth);
+
+    if (currIdx === -1) {
+      console.log(
+        'Error getting index of current horizontal resolution value in vWidthArr'
+      );
+      currIdx = 0;
+    }
+    return currIdx;
+  };
+
+  // useEffect helper to set vWidthArray
+  const pickResArray = (): number[] => {
+    let newResArray = [...new ValSettingsUI().vWidthArray];
+
+    // check and modify vWidthsArr as needed
+    if (aspRatio[0] < aspRatio[1]) {
+      newResArray = newResArray.map((el) => el * (aspRatio[0] / aspRatio[1]));
+    }
+    return newResArray;
+  };
+
   useEffect(() => {
     // use for debugging
-    console.log('Menu: Initializing Menu');
+    console.log('Menu: Initializing...');
     setAspectRatioInput([...aspRatio]);
   }, []);
+
+  useEffect(() => {
+    // use for debugging
+    console.log('Menu: Selecting vWidthArray');
+
+    // get index of vWidth in current vWidthArray
+    const idx = getIdx(vWidthArray);
+
+    // get relevant vWidthArray
+    const newArray = pickResArray();
+
+    // update state variables
+    vWidthArraySet(newArray);
+    vWidthSet(newArray[idx]);
+  }, [aspRatio]);
 
   return (
     <div className='menus'>
@@ -125,12 +166,10 @@ export default function Menu(props: MenuProps) {
         </div>
       </div>
       <Slider
-        // stateMod={vWidth}
         vWidth={vWidth}
         vWidthSet={vWidthSet}
-        // stateVar={'vWidth'}
+        vWidthArray={vWidthArray}
         step={20}
-        // misc={aspRatio[0] / aspRatio[1]}
         aspRatio={aspRatio}
       ></Slider>
     </div>

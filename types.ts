@@ -38,6 +38,8 @@ export type MenuProps = {
   muteSet: () => void;
   vWidth: number;
   vWidthSet: (inp: number) => void;
+  vWidthArray: number[];
+  vWidthArraySet: (inp: number[]) => void;
   aspRatio: [number, number];
   aspRatioSet: (inp: [number, number]) => void;
 };
@@ -62,6 +64,7 @@ export class ValSettingsUI {
   autoStart: boolean;
   mute: boolean;
   vWidth: number;
+  vWidthArray: number[];
   aspRatio: [number, number];
 
   constructor() {
@@ -70,6 +73,7 @@ export class ValSettingsUI {
     this.autoStart = false;
     this.mute = false;
     this.vWidth = 720;
+    this.vWidthArray = [240, 352, 480, 720, 960, 1280, 1440, 1920, 2880, 3840];
     this.aspRatio = [16, 9];
   }
 }
@@ -86,6 +90,7 @@ export class ValSettings extends ValSettingsUI {
 export type SliderProps = {
   vWidth: number;
   vWidthSet: (inp: number) => void;
+  vWidthArray: number[];
   step: number;
   aspRatio: [number, number];
 };

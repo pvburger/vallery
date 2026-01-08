@@ -122,6 +122,7 @@ const registerHandlers = (): void => {
       autoStart: eStore.get('autoStart'),
       mute: eStore.get('mute'),
       vWidth: eStore.get('vWidth'),
+      vWidthArray: eStore.get('vWidthArray'),
       aspRatio: eStore.get('aspRatio') as [number, number],
       // lastPath: eStore.get('lastPath'),
     };
@@ -135,6 +136,7 @@ const registerHandlers = (): void => {
       eStore.set('autoStart', settingsObj.autoStart);
       eStore.set('mute', settingsObj.mute);
       eStore.set('vWidth', settingsObj.vWidth);
+      eStore.set('vWidthArray', settingsObj.vWidthArray);
       eStore.set('aspRatio', settingsObj.aspRatio);
       // 'lastPath' property is set by 'dialog:selectFiles' handler
     }

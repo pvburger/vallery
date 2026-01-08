@@ -23,9 +23,14 @@ export const schema: Schema<ValSettings> = {
     type: 'number',
     default: 720,
   },
+  vWidthArray: {
+    type: 'array',
+    items: { type: 'number' },
+    default: [240, 352, 480, 720, 960, 1280, 1440, 1920, 2880, 3840],
+  },
   aspRatio: {
     type: 'array',
-    items: { type: 'number'},
+    items: { type: 'number' },
     minItems: 2,
     maxItems: 2,
     default: [16, 9],

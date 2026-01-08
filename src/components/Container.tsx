@@ -9,7 +9,7 @@ export default function Container() {
   const [clipArray, setClipArray] = useState<string[]>([]);
   const [menuDisplay, setMenuDisplay] = useState(false);
   const [stateLoaded, setStateLoaded] = useState(false);
-  const [userSettings, setUserSettings] = useState(new ValSettingsUI());
+  const [userSettings, setUserSettings] = useState(() => new ValSettingsUI());
 
   // wrappers
   const clearFileList = (): void => {
@@ -40,13 +40,15 @@ export default function Container() {
     setUserSettings((prev) => ({ ...prev, vWidth: inp }));
   };
 
+  const vWidthArraySet = (inp: number[]) => {
+    setUserSettings((prev) => ({ ...prev, vWidthArray: inp }));
+  };
+
   const aspRatioSet = (inp: [number, number]) => {
     setUserSettings((prev) => ({ ...prev, aspRatio: inp }));
   };
 
   const updateState = async (): Promise<void> => {
-    // // use for debugging
-    // console.log('Initialize state');
     try {
       // load saved settings from electron-store
       const settingsObj = await window.valleryAPI.getSettingsObj();
@@ -109,7 +111,7 @@ export default function Container() {
 
   useEffect(() => {
     // use for debugging
-    console.log('Container: Initializing state');
+    console.log('Container: Initializing...');
     updateState();
   }, []);
 
@@ -166,6 +168,8 @@ export default function Container() {
             muteSet={muteSet}
             vWidth={userSettings.vWidth}
             vWidthSet={vWidthSet}
+            vWidthArray={userSettings.vWidthArray}
+            vWidthArraySet={vWidthArraySet}
             aspRatio={userSettings.aspRatio}
             aspRatioSet={aspRatioSet}
           ></Menu>
