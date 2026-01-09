@@ -10,6 +10,7 @@ export default function Container() {
   const [menuDisplay, setMenuDisplay] = useState(false);
   const [stateLoaded, setStateLoaded] = useState(false);
   const [userSettings, setUserSettings] = useState(() => new ValSettingsUI());
+  const [reSet, setReSet] = useState(false);
 
   // wrappers
   const clearFileList = (): void => {
@@ -48,6 +49,10 @@ export default function Container() {
     setUserSettings((prev) => ({ ...prev, aspRatio: inp }));
   };
 
+  const reSetSet = () => {
+    setReSet(true);
+  };
+
   const updateState = async (): Promise<void> => {
     try {
       // load saved settings from electron-store
@@ -56,6 +61,7 @@ export default function Container() {
       // update state
       setUserSettings(settingsObj);
       setStateLoaded(true);
+      setReSet(false);
     } catch (err) {
       console.log(
         `There was a problem updating state with electron-store values: ${err}`
@@ -143,6 +149,26 @@ export default function Container() {
     }
   }, [userSettings.mute, userSettings.autoStart]);
 
+  // side effect to restore default user settings
+  useEffect(() => {
+    if (!reSet) return;
+
+    // use for debugging
+    console.log('Container: Restoring user defaults');
+
+    (async () => {
+      try {
+        await window.valleryAPI.reDefault();
+      } catch (err) {
+        console.log(
+          `There was an error restoring default user settings: ${err}`
+        );
+      } finally {
+        updateState();
+      }
+    })();
+  }, [reSet]);
+
   return (
     <div className='mainContain'>
       <div className='headContain'>
@@ -172,6 +198,7 @@ export default function Container() {
             vWidthArraySet={vWidthArraySet}
             aspRatio={userSettings.aspRatio}
             aspRatioSet={aspRatioSet}
+            reSetSet={reSetSet}
           ></Menu>
         </div>
       )}

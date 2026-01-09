@@ -39,6 +39,7 @@ declare global {
       getRandomNum: (lo: number, hi: number) => Promise<number>;
       getSettingsObj: () => Promise<ValSettingsUI>;
       setSettingsObj: (settingsObj: ValSettingsUI) => void;
+      reDefault: () => Promise<void>;
     };
   }
 }

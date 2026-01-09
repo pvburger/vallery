@@ -17,4 +17,7 @@ contextBridge.exposeInMainWorld('valleryAPI', {
   setSettingsObj: async (settingsObj: ValSettingsUI) => {
     await ipcRenderer.invoke('setStoreObj', settingsObj);
   },
+  reDefault: async (): Promise<void> => {
+    await ipcRenderer.invoke('resetStore');
+  },
 });

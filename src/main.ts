@@ -141,6 +141,9 @@ const registerHandlers = (): void => {
       // 'lastPath' property is set by 'dialog:selectFiles' handler
     }
   );
+  ipcMain.handle('resetStore', (): void => {
+    eStore.clear();
+  });
 };
 
 const initialize = async (): Promise<void> => {

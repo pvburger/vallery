@@ -42,6 +42,7 @@ export type MenuProps = {
   vWidthArraySet: (inp: number[]) => void;
   aspRatio: [number, number];
   aspRatioSet: (inp: [number, number]) => void;
+  reSetSet: () => void;
 };
 
 export type VideoItemProps = {

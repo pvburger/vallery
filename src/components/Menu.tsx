@@ -24,6 +24,7 @@ export default function Menu(props: MenuProps) {
     vWidthArraySet,
     aspRatio,
     aspRatioSet,
+    reSetSet,
   } = props;
 
   // // debugger
@@ -82,12 +83,7 @@ export default function Menu(props: MenuProps) {
   useEffect(() => {
     // use for debugging
     console.log('Menu: Initializing...');
-    setAspectRatioInput([...aspRatio]);
-  }, []);
-
-  useEffect(() => {
-    // use for debugging
-    console.log('Menu: Selecting vWidthArray');
+    // console.log('Menu: Selecting vWidthArray');
 
     // get index of vWidth in current vWidthArray
     const idx = getIdx(vWidthArray);
@@ -96,6 +92,7 @@ export default function Menu(props: MenuProps) {
     const newArray = pickResArray();
 
     // update state variables
+    setAspectRatioInput([...aspRatio]);
     vWidthArraySet(newArray);
     vWidthSet(newArray[idx]);
   }, [aspRatio]);
@@ -130,10 +127,7 @@ export default function Menu(props: MenuProps) {
             <p className='menuEntryTxt'>Randomize Playback Order</p>
           </div>
         </div>
-        <Button
-          label='RESET'
-          runFun={() => console.log('Insert Function...')}
-        ></Button>
+        <Button label='RESET' runFun={() => reSetSet()}></Button>
       </div>
       <div className='aspectEntry'>
         <p className='aspectEntryTxt'>Video Aspect Ratio:</p>
