@@ -163,7 +163,7 @@ export default function Menu(props: MenuProps) {
         vWidth={vWidth}
         vWidthSet={vWidthSet}
         vWidthArray={vWidthArray}
-        step={20}
+        step={1}
         aspRatio={aspRatio}
       ></Slider>
     </div>

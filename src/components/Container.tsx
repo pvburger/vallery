@@ -11,6 +11,7 @@ export default function Container() {
   const [stateLoaded, setStateLoaded] = useState(false);
   const [userSettings, setUserSettings] = useState(() => new ValSettingsUI());
   const [reSet, setReSet] = useState(false);
+  const [maxVidId, setMaxVidId] = useState<null | string>(null);
 
   // wrappers
   const clearFileList = (): void => {
@@ -51,6 +52,10 @@ export default function Container() {
 
   const reSetSet = () => {
     setReSet(true);
+  };
+
+  const maxVidIdSet = (inp: string | null) => {
+    setMaxVidId(inp);
   };
 
   const updateState = async (): Promise<void> => {
@@ -219,6 +224,8 @@ export default function Container() {
               mute={userSettings.mute}
               autoStart={userSettings.autoStart}
               randStart={userSettings.randStart}
+              maxVidId={maxVidId}
+              maxVidIdSet={maxVidIdSet}
             />
           )}
         ></VirtuosoGrid>

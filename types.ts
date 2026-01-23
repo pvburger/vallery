@@ -52,6 +52,8 @@ export type VideoItemProps = {
   mute: boolean;
   autoStart: boolean;
   randStart: boolean;
+  maxVidId: null | string;
+  maxVidIdSet: (inp: null | string) => void;
 };
 
 export type ToggleProps = {
