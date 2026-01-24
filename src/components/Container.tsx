@@ -69,7 +69,7 @@ export default function Container() {
       setReSet(false);
     } catch (err) {
       console.log(
-        `There was a problem updating state with electron-store values: ${err}`
+        `There was a problem updating state with electron-store values: ${err}`,
       );
     }
   };
@@ -102,7 +102,7 @@ export default function Container() {
       if (clipArr.length > 0) {
         if (userSettings.randOrder) {
           setClipArray(
-            await randomizeArr(removeDupes([...clipArray, ...clipArr]))
+            await randomizeArr(removeDupes([...clipArray, ...clipArr])),
           );
         } else {
           setClipArray(removeDupes([...clipArray, ...clipArr]));
@@ -166,7 +166,7 @@ export default function Container() {
         await window.valleryAPI.reDefault();
       } catch (err) {
         console.log(
-          `There was an error restoring default user settings: ${err}`
+          `There was an error restoring default user settings: ${err}`,
         );
       } finally {
         updateState();
@@ -216,6 +216,7 @@ export default function Container() {
           totalCount={clipArray.length}
           itemClassName='gridItem'
           listClassName='gridContainer'
+          overscan={0}
           itemContent={(index) => (
             <VideoItem
               path={clipArray[index]}

@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import type { VideoItemProps } from '../../types';
 
 export default function VideoItem(props: VideoItemProps) {
-  const [tStamp, setTStamp] = useState(0);
+  const tStamp = useRef(0);
+  const vidPaused = useRef(false);
+  const vidStopped = useRef(true);
 
   const {
     path,
@@ -39,35 +41,28 @@ export default function VideoItem(props: VideoItemProps) {
     // this shouldn't be stricly necessary; video files should be verifed at this point
     if (!duration || isNaN(duration)) return;
 
-    // if random start time is enabled, and 'currTime' is still 0 (on first load), compute random start time and reset current time
-    if (randStart) {
+    // if tStamp has a non-zero value, video has been torn down and then re-initialized; resume playback from tStamp
+    // else, if tStamp === 0 AND randStart is true, get a random start time
+    if (tStamp.current !== 0) {
+      video.currentTime = tStamp.current;
+    } else if (randStart) {
       video.currentTime = await genRandomTime(duration);
     }
 
-    // if autoPlay is enabled, begin playback at that location:
-    if (video.autoplay) {
-      try {
-        video.play();
-      } catch (err) {
+    // if autoStart is enabled on first run OR the video was playing prior to being torn down, begin playback at that location:
+    if (
+      (autoStart && tStamp.current === 0) ||
+      (tStamp.current !== 0 && !vidPaused.current)
+    ) {
+      video.play().catch((err) => {
+        if (err instanceof Error && err.name === 'AbortError') return;
         console.log(`There was an error playing the video: ${err}`);
-      }
+      });
+    } else {
+      vidPaused.current = true;
     }
+    vidStopped.current = false;
   };
-
-  // // helper function to set video attributes
-  // const popVidEl = (inp: HTMLVideoElement): void => {
-  //   inp.src = srcAddress;
-  //   inp.className = 'video';
-  //   inp.controls = true;
-  //   inp.width = vWidth;
-  //   // style={{ height: vWidth / (aspRatio[0] / aspRatio[1]), margin: 0 }}
-  //   inp.height = vWidth / (aspRatio[0] / aspRatio[1]);
-  //   inp.style.margin = '0';
-  //   inp.muted = mute;
-  //   inp.autoplay = mute && autoStart;
-  //   inp.loop = true;
-  //   inp.preload = 'metadata';
-  // };
 
   // helper function to set state variable which holds path for maximized videos
   const maxiMizer = () => {
@@ -85,10 +80,7 @@ export default function VideoItem(props: VideoItemProps) {
 
     if (!thisVid) return;
 
-    // popVidEl(thisVid);
-
     console.log('Adding event listeners...');
-    // thisVid.addEventListener('loadedmetadata', handleMetadata);
     thisVid.addEventListener('fullscreenchange', maxiMizer);
 
     // cleanup function to ensure expediant reallocation of resources
@@ -96,7 +88,7 @@ export default function VideoItem(props: VideoItemProps) {
       // if <VideoItem> unmounts before ref is created
       if (!thisVid) return;
 
-      // thisVid.removeEventListener('loadedmetadata', handleMetadata);
+      console.log('Removing event listeners...');
       thisVid.removeEventListener('fullscreenchange', maxiMizer);
       thisVid.pause();
       thisVid.removeAttribute('src');
@@ -116,33 +108,34 @@ export default function VideoItem(props: VideoItemProps) {
         return;
       }
 
-      // a different video has been maximized; pause this one
-      thisVid.pause();
-      setTStamp(thisVid.currentTime);
-      return;
-    }
-
-    // maxVidId === null; a previously maximized video is (de)maximized OR this is the initial playback
-
-    // this video was not the previously maximized video; simply resume playback
-    if (thisVid.paused && tStamp) {
-      try {
-        thisVid.play();
-      } catch (err) {
-        console.log(`There was an error resuming ${path}:${err}`);
+      // a different video has been maximized; tear down this one...
+      // if the video is already paused, make sure to set the pause flag
+      if (thisVid.paused) {
+        vidPaused.current = true;
       }
+      tStamp.current = thisVid.currentTime;
+      vidStopped.current = true;
+      thisVid.pause();
+      thisVid.removeAttribute('src');
+      thisVid.load();
+
       return;
     }
 
-    // this video was the previously maximized video OR this is initial playback; simply return
+    // maxVidId === null; a previously maximized video is (de)maximized (this one or another one) OR this is the initial playback
+    // this video was the previously maximized video; simply continue playback
+    if (!vidStopped.current && thisVid.getAttribute('src')) return;
+
+    // initial playback or this video was not the previously maximized video and no longer has a 'src' attribute
+    thisVid.src = srcAddress;
+    thisVid.load();
     return;
   }, [maxVidId]);
 
   // all of the inline styling included below is crucial to proper function
   return (
-    <div>
+    <div style={{ width: vWidth }}>
       <video
-        src={srcAddress}
         // update videoRef.current to refer to this element
         ref={videoRef}
         className='video'
@@ -151,13 +144,23 @@ export default function VideoItem(props: VideoItemProps) {
         height={vWidth / (aspRatio[0] / aspRatio[1])}
         style={{ margin: 0 }}
         muted={mute}
-        // audio playback must be muted for autoPlay to work
-        autoPlay={mute && autoStart}
+        autoPlay={false}
         loop={true}
         preload='metadata'
         onLoadedMetadata={(event) => handleMetadata(event)}
       ></video>
-      <p style={{ margin: 0, paddingTop: '5px' }}>{path.slice(lastSlash)}</p>
+      <p
+        style={{
+          margin: 0,
+          paddingTop: '5px',
+          maxWidth: '100%',
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}
+      >
+        {path.slice(lastSlash)}
+      </p>
     </div>
   );
 }
