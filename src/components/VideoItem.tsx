@@ -36,6 +36,10 @@ export default function VideoItem(props: VideoItemProps) {
     event: React.SyntheticEvent<HTMLVideoElement>,
   ) => {
     const video = event.currentTarget;
+
+    // guard against late metadata after teardown
+    if (!video.getAttribute('src')) return;
+
     const duration = video.duration;
 
     // this shouldn't be stricly necessary; video files should be verifed at this point
@@ -54,6 +58,8 @@ export default function VideoItem(props: VideoItemProps) {
       (autoStart && tStamp.current === 0) ||
       (tStamp.current !== 0 && !vidPaused.current)
     ) {
+      // added for development
+      console.log(`PLAY (${video.currentTime}: ${path})`);
       video.play().catch((err) => {
         if (err instanceof Error && err.name === 'AbortError') return;
         console.log(`There was an error playing the video: ${err}`);
@@ -67,10 +73,12 @@ export default function VideoItem(props: VideoItemProps) {
   // helper function to set state variable which holds path for maximized videos
   const maxiMizer = () => {
     if (document.fullscreenElement) {
-      console.log(`Entering fullscreen mode (${path})...`);
+      // // added for devlopment
+      // console.log(`Entering fullscreen mode (${path})...`);
       maxVidIdSet(path);
     } else {
-      console.log(`Exiting fullscreen mode (${path})...`);
+      // // added for devlopment
+      // console.log(`Exiting fullscreen mode (${path})...`);
       maxVidIdSet(null);
     }
   };
@@ -80,7 +88,8 @@ export default function VideoItem(props: VideoItemProps) {
 
     if (!thisVid) return;
 
-    console.log('Adding event listeners...');
+    // // added for development
+    // console.log('Adding event listeners...');
     thisVid.addEventListener('fullscreenchange', maxiMizer);
 
     // cleanup function to ensure expediant reallocation of resources
@@ -88,7 +97,8 @@ export default function VideoItem(props: VideoItemProps) {
       // if <VideoItem> unmounts before ref is created
       if (!thisVid) return;
 
-      console.log('Removing event listeners...');
+      // // added for development
+      // console.log('Removing event listeners...');
       thisVid.removeEventListener('fullscreenchange', maxiMizer);
       thisVid.pause();
       thisVid.removeAttribute('src');
@@ -108,11 +118,24 @@ export default function VideoItem(props: VideoItemProps) {
         return;
       }
 
-      // a different video has been maximized; tear down this one...
-      // if the video is already paused, make sure to set the pause flag
-      if (thisVid.paused) {
-        vidPaused.current = true;
+      // a different video has been maximized; pause or tear down this one...
+      // if this video has already loaded and is capable of playing, pause this video
+      if (thisVid.readyState >= 3) {
+        if (thisVid.paused) {
+          vidPaused.current = true;
+        }
+        // added for development
+        console.log(`PAUSE (${thisVid.currentTime}): ${path}`);
+        // the following may be helpful in preventing a race condition
+        vidStopped.current = false;
+        thisVid.pause();
+
+        return;
       }
+
+      // this video has not yet loaded; tear it down
+      // added for development
+      console.log(`STOP: ${path}`);
       tStamp.current = thisVid.currentTime;
       vidStopped.current = true;
       thisVid.pause();
@@ -123,10 +146,22 @@ export default function VideoItem(props: VideoItemProps) {
     }
 
     // maxVidId === null; a previously maximized video is (de)maximized (this one or another one) OR this is the initial playback
-    // this video was the previously maximized video; simply continue playback
-    if (!vidStopped.current && thisVid.getAttribute('src')) return;
+    // this video was the previously maximized video OR this video was successfully loaded prior to previous maximize event
+    if (!vidStopped.current && thisVid.getAttribute('src')) {
+      if (!vidPaused.current) {
+        // if video was playing (either maximzed or prior to maximize event)
+        // added for development
+        console.log(`PLAY (${thisVid.currentTime}: ${path})`);
+        thisVid.play().catch((err) => {
+          if (err instanceof Error && err.name === 'AbortError') return;
+          console.log(`There was an error playing the video: ${err}`);
+        });
+      }
+      // successfully loaded video was in paused state
+      return;
+    }
 
-    // initial playback or this video was not the previously maximized video and no longer has a 'src' attribute
+    // initial playback OR video had been torn down during previous maximize event
     thisVid.src = srcAddress;
     thisVid.load();
     return;
