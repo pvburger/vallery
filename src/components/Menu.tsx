@@ -5,11 +5,8 @@ import Button from './Button';
 import { useState, useEffect } from 'react';
 
 export default function Menu(props: MenuProps) {
-  const [aspRatioInput, setAspectRatioInput] = useState(
-    () => new ValSettingsUI().aspRatio
-  );
-
-  const {
+  
+    const {
     randOrder,
     randOrderSet,
     randStart,
@@ -26,6 +23,12 @@ export default function Menu(props: MenuProps) {
     aspRatioSet,
     reSetSet,
   } = props;
+
+  const [aspRatioInput, setAspectRatioInput] = useState(
+    () => new ValSettingsUI().aspRatio
+  );
+
+
 
   // // debugger
   // const debooger = (inp: string): void => {

@@ -1,4 +1,5 @@
 import type { ParsedQs } from 'qs';
+import { RefObject } from 'react';
 
 export type ButtonProp = {
   label: string;
@@ -54,6 +55,8 @@ export type VideoItemProps = {
   randStart: boolean;
   maxVidId: null | string;
   maxVidIdSet: (inp: null | string) => void;
+  // a reference to the VirtuosoGrid scroller node
+  virtScrollRef: null | HTMLElement;
 };
 
 export type ToggleProps = {

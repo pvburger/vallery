@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import type { SliderProps } from 'types';
 
 export default function Slider(props: SliderProps) {
+  
+  const { vWidth, vWidthSet, vWidthArray, step, aspRatio } = props;
+
   const [sliderVal, setSliderVal] = useState(0);
   const [drag, setDrag] = useState(false);
   const [label, setLabel] = useState('');
@@ -11,8 +14,6 @@ export default function Slider(props: SliderProps) {
   //   window.innerWidth,
   //   window.innerHeight,
   // ]);
-
-  const { vWidth, vWidthSet, vWidthArray, step, aspRatio } = props;
 
   // // DEVELOPMENT MODE
   // const devMode = true;
@@ -44,7 +45,7 @@ export default function Slider(props: SliderProps) {
           className='tick'
           key={`tick_vWidth-${count}`}
           style={{ left: `${element}%` }}
-        ></div>
+        ></div>,
       );
       count++;
     }
@@ -56,7 +57,7 @@ export default function Slider(props: SliderProps) {
   const change = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSliderVal(Number(event.target.value));
     setLabel(
-      `Video Resolution: ${sliderVal} x ${Math.ceil(sliderVal / (aspRatio[0] / aspRatio[1]))}`
+      `Video Resolution: ${sliderVal} x ${Math.ceil(sliderVal / (aspRatio[0] / aspRatio[1]))}`,
     );
   };
 
@@ -94,7 +95,7 @@ export default function Slider(props: SliderProps) {
     }
     setDrag(false);
     setLabel(
-      `Video Resolution: ${newVal} x ${Math.ceil(newVal / (aspRatio[0] / aspRatio[1]))}`
+      `Video Resolution: ${newVal} x ${Math.ceil(newVal / (aspRatio[0] / aspRatio[1]))}`,
     );
   };
 
@@ -104,7 +105,7 @@ export default function Slider(props: SliderProps) {
 
     setSliderVal(vWidth);
     setLabel(
-      `Video Resolution: ${vWidth} x ${Math.ceil(vWidth / (aspRatio[0] / aspRatio[1]))}`
+      `Video Resolution: ${vWidth} x ${Math.ceil(vWidth / (aspRatio[0] / aspRatio[1]))}`,
     );
   }, [aspRatio, vWidthArray]);
 

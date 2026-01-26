@@ -2,10 +2,6 @@ import { useEffect, useRef } from 'react';
 import type { VideoItemProps } from '../../types';
 
 export default function VideoItem(props: VideoItemProps) {
-  const tStamp = useRef(0);
-  const vidPaused = useRef(false);
-  const vidStopped = useRef(true);
-
   const {
     path,
     vWidth,
@@ -15,7 +11,13 @@ export default function VideoItem(props: VideoItemProps) {
     randStart,
     maxVidId,
     maxVidIdSet,
+    virtScrollRef,
   } = props;
+
+  const tStamp = useRef(0);
+  const vidPaused = useRef(false);
+  const izViz = useRef(false);
+  const izMax = useRef(false);
 
   const srcAddress = `http://127.0.0.1:3333/video?path=${path}`;
   const lastSlash = path.lastIndexOf('/') + 1;
@@ -37,8 +39,8 @@ export default function VideoItem(props: VideoItemProps) {
   ) => {
     const video = event.currentTarget;
 
-    // guard against late metadata after teardown
-    if (!video.getAttribute('src')) return;
+    // guard against late metadata after teardown and (non-visible) items (according to IntersectionObserver in useEffect)
+    if (!video.getAttribute('src') || !izViz.current) return;
 
     const duration = video.duration;
 
@@ -49,6 +51,7 @@ export default function VideoItem(props: VideoItemProps) {
     // else, if tStamp === 0 AND randStart is true, get a random start time
     if (tStamp.current !== 0) {
       video.currentTime = tStamp.current;
+      // tStamp.current = 0;
     } else if (randStart) {
       video.currentTime = await genRandomTime(duration);
     }
@@ -58,6 +61,8 @@ export default function VideoItem(props: VideoItemProps) {
       (autoStart && tStamp.current === 0) ||
       (tStamp.current !== 0 && !vidPaused.current)
     ) {
+      tStamp.current = 0;
+      vidPaused.current = false;
       // added for development
       console.log(`PLAY (${video.currentTime}: ${path})`);
       video.play().catch((err) => {
@@ -65,9 +70,9 @@ export default function VideoItem(props: VideoItemProps) {
         console.log(`There was an error playing the video: ${err}`);
       });
     } else {
+      // <video> was already loaded and paused before maximize event OR autoStart is false
       vidPaused.current = true;
     }
-    vidStopped.current = false;
   };
 
   // helper function to set state variable which holds path for maximized videos
@@ -88,9 +93,62 @@ export default function VideoItem(props: VideoItemProps) {
 
     if (!thisVid) return;
 
+    const vizCrossOver = 0.4;
+    // entryViz and exitViz are used to implement hysteresis, to prevent oscillation of izViz.current when <video> visibility is exactly at the vizCrossOver
+    const entryViz = vizCrossOver + 0.05;
+    const exitViz = vizCrossOver - 0.05;
+
+    const vizObserver = new IntersectionObserver(
+      ([entry]) => {
+        // exit IntersectionObserver on maximize events; it's not needed and creates problems
+        if (izMax.current) return;
+
+        // added for debugging
+        console.log(`Observer fired (${path})`);
+
+        // boolean indicator of whether the stipulated area (as a ratio) of the given entry is in the viewport
+        const vizRatio = entry.intersectionRatio;
+
+        // added for debugging
+        const oldViz = izViz.current;
+
+        if (vizRatio >= entryViz) {
+          izViz.current = true;
+        } else if (vizRatio < exitViz) {
+          izViz.current = false;
+        }
+        // added for debugging
+        if (oldViz !== izViz.current) {
+          console.log(`VIZ CHANGE (${path}): ${oldViz} ---> ${izViz.current}`);
+        }
+
+        // if izViz.current is false
+        if (!izViz.current) {
+          if (thisVid.getAttribute('src')) {
+            thisVid.pause();
+            thisVid.removeAttribute('src');
+            thisVid.load();
+          }
+          return;
+        }
+
+        // isViz.current is true; just regained visibility?
+        // the second condition ensures that videos are only loaded when no other videos are maximized
+        if (!thisVid.getAttribute('src')) {
+          thisVid.src = srcAddress;
+          thisVid.load();
+        }
+        return;
+      },
+      {
+        root: virtScrollRef,
+        threshold: [exitViz, entryViz],
+      },
+    );
     // // added for development
     // console.log('Adding event listeners...');
     thisVid.addEventListener('fullscreenchange', maxiMizer);
+    vizObserver.observe(thisVid);
 
     // cleanup function to ensure expediant reallocation of resources
     return () => {
@@ -100,11 +158,17 @@ export default function VideoItem(props: VideoItemProps) {
       // // added for development
       // console.log('Removing event listeners...');
       thisVid.removeEventListener('fullscreenchange', maxiMizer);
+      vizObserver.disconnect();
       thisVid.pause();
       thisVid.removeAttribute('src');
       thisVid.load();
     };
   }, []);
+
+  // used to update izMax reference...
+  useEffect(() => {
+    izMax.current = maxVidId === null ? false : true;
+  }, [maxVidId]);
 
   useEffect(() => {
     const thisVid = videoRef.current;
@@ -120,24 +184,22 @@ export default function VideoItem(props: VideoItemProps) {
 
       // a different video has been maximized; pause or tear down this one...
       // if this video has already loaded and is capable of playing, pause this video
-      if (thisVid.readyState >= 3) {
+      if (thisVid.readyState >= 3 && izViz.current) {
         if (thisVid.paused) {
           vidPaused.current = true;
         }
         // added for development
         console.log(`PAUSE (${thisVid.currentTime}): ${path}`);
-        // the following may be helpful in preventing a race condition
-        vidStopped.current = false;
         thisVid.pause();
 
         return;
       }
 
-      // this video has not yet loaded; tear it down
+      // this video has not yet loaded OR is not sufficiently visible; tear it down
       // added for development
       console.log(`STOP: ${path}`);
+      // WE'RE TEARING DOWN THE VIDEO: DO WE NEED THE CURRENT TIME?
       tStamp.current = thisVid.currentTime;
-      vidStopped.current = true;
       thisVid.pause();
       thisVid.removeAttribute('src');
       thisVid.load();
@@ -147,7 +209,8 @@ export default function VideoItem(props: VideoItemProps) {
 
     // maxVidId === null; a previously maximized video is (de)maximized (this one or another one) OR this is the initial playback
     // this video was the previously maximized video OR this video was successfully loaded prior to previous maximize event
-    if (!vidStopped.current && thisVid.getAttribute('src')) {
+    // STILL UNCLEAR WHY WE NEED TO CHECK IZVIZ.CURRENT HERE...
+    if (thisVid.getAttribute('src') && izViz.current) {
       if (!vidPaused.current) {
         // if video was playing (either maximzed or prior to maximize event)
         // added for development
@@ -157,13 +220,15 @@ export default function VideoItem(props: VideoItemProps) {
           console.log(`There was an error playing the video: ${err}`);
         });
       }
-      // successfully loaded video was in paused state
+      // successfully loaded video was in paused state; do not automatically resume playback
       return;
     }
 
     // initial playback OR video had been torn down during previous maximize event
-    thisVid.src = srcAddress;
-    thisVid.load();
+    if (izViz.current) {
+      thisVid.src = srcAddress;
+      thisVid.load();
+    }
     return;
   }, [maxVidId]);
 

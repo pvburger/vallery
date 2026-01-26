@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { VirtuosoGrid } from 'react-virtuoso';
 import { ValSettingsUI } from '../../types';
 import Button from './Button';
@@ -12,6 +12,7 @@ export default function Container() {
   const [userSettings, setUserSettings] = useState(() => new ValSettingsUI());
   const [reSet, setReSet] = useState(false);
   const [maxVidId, setMaxVidId] = useState<null | string>(null);
+  const virtScrollRef = useRef<null | HTMLElement>(null);
 
   // wrappers
   const clearFileList = (): void => {
@@ -213,6 +214,9 @@ export default function Container() {
       >
         <VirtuosoGrid
           style={{ height: '100%' }}
+          scrollerRef={(ref) => {
+            virtScrollRef.current = ref;
+          }}
           totalCount={clipArray.length}
           itemClassName='gridItem'
           listClassName='gridContainer'
@@ -227,6 +231,7 @@ export default function Container() {
               randStart={userSettings.randStart}
               maxVidId={maxVidId}
               maxVidIdSet={maxVidIdSet}
+              virtScrollRef={virtScrollRef.current}
             />
           )}
         ></VirtuosoGrid>
