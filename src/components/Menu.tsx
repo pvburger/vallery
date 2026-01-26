@@ -84,9 +84,8 @@ export default function Menu(props: MenuProps) {
   };
 
   useEffect(() => {
-    // use for debugging
-    console.log('Menu: Initializing...');
-    // console.log('Menu: Selecting vWidthArray');
+    // // use for debugging
+    // console.log('Menu: Initializing...');
 
     // get index of vWidth in current vWidthArray
     const idx = getIdx(vWidthArray);

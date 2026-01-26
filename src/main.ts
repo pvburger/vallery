@@ -50,12 +50,12 @@ const createWindow = async () => {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   } else {
     mainWindow.loadFile(
-      path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)
+      path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`),
     );
   }
 
-  // open developer tools
-  mainWindow.webContents.openDevTools();
+  // // open developer tools
+  // mainWindow.webContents.openDevTools();
 };
 
 const registerHandlers = (): void => {
@@ -98,20 +98,20 @@ const registerHandlers = (): void => {
     async (
       event: IpcMainInvokeEvent,
       lo: number,
-      hi: number
+      hi: number,
     ): Promise<number> => {
       return new Promise((res, rej) => {
         crypto.randomInt(lo, hi, (err, n) => {
           if (err) {
             console.log(
-              `There was an error generating the random number: ${err}`
+              `There was an error generating the random number: ${err}`,
             );
             rej(err);
           }
           res(n);
         });
       });
-    }
+    },
   );
 
   // handlers for electron-store
@@ -124,7 +124,6 @@ const registerHandlers = (): void => {
       vWidth: eStore.get('vWidth'),
       vWidthArray: eStore.get('vWidthArray'),
       aspRatio: eStore.get('aspRatio') as [number, number],
-      // lastPath: eStore.get('lastPath'),
     };
   });
 
@@ -139,7 +138,7 @@ const registerHandlers = (): void => {
       eStore.set('vWidthArray', settingsObj.vWidthArray);
       eStore.set('aspRatio', settingsObj.aspRatio);
       // 'lastPath' property is set by 'dialog:selectFiles' handler
-    }
+    },
   );
   ipcMain.handle('resetStore', (): void => {
     eStore.clear();

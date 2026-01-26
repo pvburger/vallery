@@ -51,7 +51,6 @@ export default function VideoItem(props: VideoItemProps) {
     // else, if tStamp === 0 AND randStart is true, get a random start time
     if (tStamp.current !== 0) {
       video.currentTime = tStamp.current;
-      // tStamp.current = 0;
     } else if (randStart) {
       video.currentTime = await genRandomTime(duration);
     }
@@ -63,8 +62,8 @@ export default function VideoItem(props: VideoItemProps) {
     ) {
       tStamp.current = 0;
       vidPaused.current = false;
-      // added for development
-      console.log(`PLAY (${video.currentTime}: ${path})`);
+      // // added for development
+      // console.log(`PLAY (${video.currentTime}: ${path})`);
       video.play().catch((err) => {
         if (err instanceof Error && err.name === 'AbortError') return;
         console.log(`There was an error playing the video: ${err}`);
@@ -103,23 +102,16 @@ export default function VideoItem(props: VideoItemProps) {
         // exit IntersectionObserver on maximize events; it's not needed and creates problems
         if (izMax.current) return;
 
-        // added for debugging
-        console.log(`Observer fired (${path})`);
+        // // added for debugging
+        // console.log(`Observer fired (${path})`);
 
         // boolean indicator of whether the stipulated area (as a ratio) of the given entry is in the viewport
         const vizRatio = entry.intersectionRatio;
-
-        // added for debugging
-        const oldViz = izViz.current;
 
         if (vizRatio >= entryViz) {
           izViz.current = true;
         } else if (vizRatio < exitViz) {
           izViz.current = false;
-        }
-        // added for debugging
-        if (oldViz !== izViz.current) {
-          console.log(`VIZ CHANGE (${path}): ${oldViz} ---> ${izViz.current}`);
         }
 
         // if izViz.current is false
@@ -142,7 +134,18 @@ export default function VideoItem(props: VideoItemProps) {
       },
       {
         root: virtScrollRef,
-        threshold: [exitViz, entryViz],
+        threshold: [
+          0.31,
+          0.33,
+          exitViz,
+          0.37,
+          0.39,
+          0.41,
+          0.43,
+          entryViz,
+          0.47,
+          0.49,
+        ],
       },
     );
     // // added for development
@@ -188,16 +191,18 @@ export default function VideoItem(props: VideoItemProps) {
         if (thisVid.paused) {
           vidPaused.current = true;
         }
-        // added for development
-        console.log(`PAUSE (${thisVid.currentTime}): ${path}`);
+        // // added for development
+        // console.log(`PAUSE (${thisVid.currentTime}): ${path}`);
         thisVid.pause();
 
         return;
       }
 
       // this video has not yet loaded OR is not sufficiently visible; tear it down
-      // added for development
-      console.log(`STOP: ${path}`);
+
+      // // added for development
+      // console.log(`STOP: ${path}`);
+
       // WE'RE TEARING DOWN THE VIDEO: DO WE NEED THE CURRENT TIME?
       tStamp.current = thisVid.currentTime;
       thisVid.pause();
@@ -213,8 +218,10 @@ export default function VideoItem(props: VideoItemProps) {
     if (thisVid.getAttribute('src') && izViz.current) {
       if (!vidPaused.current) {
         // if video was playing (either maximzed or prior to maximize event)
-        // added for development
-        console.log(`PLAY (${thisVid.currentTime}: ${path})`);
+
+        // // added for development
+        // console.log(`PLAY (${thisVid.currentTime}: ${path})`);
+
         thisVid.play().catch((err) => {
           if (err instanceof Error && err.name === 'AbortError') return;
           console.log(`There was an error playing the video: ${err}`);

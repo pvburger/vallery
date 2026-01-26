@@ -84,8 +84,8 @@ export default function createServer() {
       vidStats.end === null ||
       vidStats.duration === null
     ) {
-      // added for development
-      console.log(`Invalid range, streaming full video file`);
+      // // added for development
+      // console.log(`Invalid range, streaming full video file`);
       res.writeHead(200, { 'Content-Type': 'video/mp4' });
       return fs.createReadStream(filePath).pipe(res);
     } else {

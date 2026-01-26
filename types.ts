@@ -1,5 +1,4 @@
 import type { ParsedQs } from 'qs';
-import { RefObject } from 'react';
 
 export type ButtonProp = {
   label: string;

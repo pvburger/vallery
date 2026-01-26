@@ -100,8 +100,8 @@ export default function Slider(props: SliderProps) {
   };
 
   useEffect(() => {
-    // use for debugging
-    console.log('Slider: Initializing...');
+    // // use for debugging
+    // console.log('Slider: Initializing...');
 
     setSliderVal(vWidth);
     setLabel(

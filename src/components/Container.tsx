@@ -122,15 +122,15 @@ export default function Container() {
   // }, [clipArray]);
 
   useEffect(() => {
-    // use for debugging
-    console.log('Container: Initializing...');
+    // // use for debugging
+    // console.log('Container: Initializing...');
     updateState();
   }, []);
 
   useEffect(() => {
     if (stateLoaded) {
-      // use for debugging
-      console.log('Container: Updating Electron-Store');
+      // // use for debugging
+      // console.log('Container: Updating Electron-Store');
 
       window.valleryAPI.setSettingsObj(userSettings);
     }
@@ -147,8 +147,8 @@ export default function Container() {
   // if so, checks to see if autoStart is 'true' and if so, toggles it to 'false'
   // Chromium browsers/electron do not support auto playing videos unless the sound is muted
   useEffect(() => {
-    // use for debugging
-    console.log('Container: Checking mute status to determine autoStart state');
+    // // use for debugging
+    // console.log('Container: Checking mute status to determine autoStart state');
 
     if (!userSettings.mute) {
       userSettings.autoStart && autoStartSet();
@@ -159,8 +159,8 @@ export default function Container() {
   useEffect(() => {
     if (!reSet) return;
 
-    // use for debugging
-    console.log('Container: Restoring user defaults');
+    // // use for debugging
+    // console.log('Container: Restoring user defaults');
 
     (async () => {
       try {
