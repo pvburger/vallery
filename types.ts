@@ -56,6 +56,7 @@ export type VideoItemProps = {
   maxVidIdSet: (inp: null | string) => void;
   // a reference to the VirtuosoGrid scroller node
   virtScrollRef: null | HTMLElement;
+  izMax: React.RefObject<boolean>;
 };
 
 export type ToggleProps = {

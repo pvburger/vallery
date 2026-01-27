@@ -54,8 +54,8 @@ const createWindow = async () => {
     );
   }
 
-  // // open developer tools
-  // mainWindow.webContents.openDevTools();
+  // open developer tools
+  mainWindow.webContents.openDevTools();
 };
 
 const registerHandlers = (): void => {

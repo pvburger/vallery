@@ -12,12 +12,13 @@ export default function VideoItem(props: VideoItemProps) {
     maxVidId,
     maxVidIdSet,
     virtScrollRef,
+    izMax,
   } = props;
 
   const tStamp = useRef(0);
   const vidPaused = useRef(false);
   const izViz = useRef(false);
-  const izMax = useRef(false);
+  const wasMax = useRef(false);
 
   const srcAddress = `http://127.0.0.1:3333/video?path=${path}`;
   const lastSlash = path.lastIndexOf('/') + 1;
@@ -78,11 +79,11 @@ export default function VideoItem(props: VideoItemProps) {
   const maxiMizer = () => {
     if (document.fullscreenElement) {
       // // added for devlopment
-      // console.log(`Entering fullscreen mode (${path})...`);
+      console.log(`Entering fullscreen mode (${path})...`);
       maxVidIdSet(path);
     } else {
       // // added for devlopment
-      // console.log(`Exiting fullscreen mode (${path})...`);
+      console.log(`Exiting fullscreen mode (${path})...`);
       maxVidIdSet(null);
     }
   };
@@ -168,11 +169,6 @@ export default function VideoItem(props: VideoItemProps) {
     };
   }, []);
 
-  // used to update izMax reference...
-  useEffect(() => {
-    izMax.current = maxVidId === null ? false : true;
-  }, [maxVidId]);
-
   useEffect(() => {
     const thisVid = videoRef.current;
 
@@ -182,6 +178,7 @@ export default function VideoItem(props: VideoItemProps) {
     if (maxVidId !== null) {
       // this video has been maximized; continue playing
       if (maxVidId === path) {
+        wasMax.current = true;
         return;
       }
 
@@ -213,11 +210,18 @@ export default function VideoItem(props: VideoItemProps) {
     }
 
     // maxVidId === null; a previously maximized video is (de)maximized (this one or another one) OR this is the initial playback
-    // this video was the previously maximized video OR this video was successfully loaded prior to previous maximize event
-    // STILL UNCLEAR WHY WE NEED TO CHECK IZVIZ.CURRENT HERE...
+    // this video was the previously maximized video OR this video was successfully loaded prior to previous maximize event.
     if (thisVid.getAttribute('src') && izViz.current) {
+      // if video was playing (either maximized or prior to maximize event)
       if (!vidPaused.current) {
-        // if video was playing (either maximzed or prior to maximize event)
+        // if video was the previous maximized video
+        if (wasMax.current) {
+          // reset reference and propogate current state
+          wasMax.current = false;
+          return;
+        }
+
+        // video is not the previous maximized video; restart playback
 
         // // added for development
         // console.log(`PLAY (${thisVid.currentTime}: ${path})`);
@@ -226,8 +230,10 @@ export default function VideoItem(props: VideoItemProps) {
           if (err instanceof Error && err.name === 'AbortError') return;
           console.log(`There was an error playing the video: ${err}`);
         });
+        return;
       }
-      // successfully loaded video was in paused state; do not automatically resume playback
+      // successfully loaded video was in paused state; do not automatically resume playback but reset vidPaused reference
+      vidPaused.current = false;
       return;
     }
 

@@ -13,6 +13,7 @@ export default function Container() {
   const [reSet, setReSet] = useState(false);
   const [maxVidId, setMaxVidId] = useState<null | string>(null);
   const virtScrollRef = useRef<null | HTMLElement>(null);
+  const izMax = useRef(false);
 
   // wrappers
   const clearFileList = (): void => {
@@ -175,6 +176,11 @@ export default function Container() {
     })();
   }, [reSet]);
 
+  // used to update izMax reference, need by IntersectionObserver in <VideoItem>
+  useEffect(() => {
+    izMax.current = maxVidId === null ? false : true;
+  }, [maxVidId]);
+
   return (
     <div className='mainContain'>
       <div className='headContain'>
@@ -232,6 +238,7 @@ export default function Container() {
               maxVidId={maxVidId}
               maxVidIdSet={maxVidIdSet}
               virtScrollRef={virtScrollRef.current}
+              izMax={izMax}
             />
           )}
         ></VirtuosoGrid>
