@@ -79,11 +79,11 @@ export default function VideoItem(props: VideoItemProps) {
   const maxiMizer = () => {
     if (document.fullscreenElement) {
       // // added for devlopment
-      console.log(`Entering fullscreen mode (${path})...`);
+      // console.log(`Entering fullscreen mode (${path})...`);
       maxVidIdSet(path);
     } else {
       // // added for devlopment
-      console.log(`Exiting fullscreen mode (${path})...`);
+      // console.log(`Exiting fullscreen mode (${path})...`);
       maxVidIdSet(null);
     }
   };
