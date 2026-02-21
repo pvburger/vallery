@@ -13,6 +13,7 @@ export default function VideoItem(props: VideoItemProps) {
     maxVidIdSet,
     virtScrollRef,
     izMax,
+    videoReg,
   } = props;
 
   const tStamp = useRef(0);
@@ -250,7 +251,11 @@ export default function VideoItem(props: VideoItemProps) {
     <div style={{ width: vWidth }}>
       <video
         // update videoRef.current to refer to this element
-        ref={videoRef}
+        // on mount, 'el' is a DOM node; on dismount, 'el' is null
+        ref={(el) => {
+          videoRef.current = el;
+          videoReg(path, el);
+        }}
         className='video'
         controls
         width={vWidth}

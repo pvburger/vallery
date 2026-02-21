@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { VirtuosoGrid } from 'react-virtuoso';
-import { ValSettingsUI } from '../../types';
+import { ValSettingsUI, RegObj } from '../../types';
 import Button from './Button';
 import Menu from './Menu';
 import VideoItem from './VideoItem';
@@ -14,10 +14,23 @@ export default function Container() {
   const [maxVidId, setMaxVidId] = useState<null | string>(null);
   const virtScrollRef = useRef<null | HTMLElement>(null);
   const izMax = useRef(false);
+  const vidRefReg = useRef<RegObj>({});
 
   // wrappers
-  const clearFileList = (): void => {
-    setClipArray([] as string[]);
+  // used to tear down <video> DOM elements, reset relevant state and force unmount of all <VideoItem> elements
+  const reBoot = (): void => {
+    // tear down <video> DOM elements
+    Object.values(vidRefReg.current).forEach((vidNode) => {
+      vidNode.pause();
+      vidNode.removeAttribute('src');
+      vidNode.load();
+    });
+
+    // reset relevant state
+    setMaxVidId(null);
+    izMax.current = false;
+
+    setClipArray([]);
   };
 
   const toggleMenu = (): void => {
@@ -58,6 +71,12 @@ export default function Container() {
 
   const maxVidIdSet = (inp: string | null) => {
     setMaxVidId(inp);
+  };
+
+  // used by <VideoItem> to add or remove videoRefs from vidRefReg
+  const videoReg = (path: string, el: HTMLVideoElement | null): void => {
+    if (el !== null) vidRefReg.current[path] = el;
+    else delete vidRefReg.current[path];
   };
 
   const updateState = async (): Promise<void> => {
@@ -190,7 +209,7 @@ export default function Container() {
             getFileList();
           }}
         ></Button>
-        <Button label='CLEAR' runFun={clearFileList}></Button>
+        <Button label='CLEAR' runFun={reBoot}></Button>
         <Button label='OPTIONS' runFun={toggleMenu}></Button>
       </div>
       {menuDisplay && (
@@ -239,6 +258,7 @@ export default function Container() {
               maxVidIdSet={maxVidIdSet}
               virtScrollRef={virtScrollRef.current}
               izMax={izMax}
+              videoReg={videoReg}
             />
           )}
         ></VirtuosoGrid>

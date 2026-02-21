@@ -57,6 +57,7 @@ export type VideoItemProps = {
   // a reference to the VirtuosoGrid scroller node
   virtScrollRef: null | HTMLElement;
   izMax: React.RefObject<boolean>;
+  videoReg: (path: string, el: HTMLVideoElement | null) => void;
 };
 
 export type ToggleProps = {
@@ -99,4 +100,8 @@ export type SliderProps = {
   vWidthArray: number[];
   step: number;
   aspRatio: [number, number];
+};
+
+export type RegObj = {
+  [index: string]: HTMLVideoElement;
 };
