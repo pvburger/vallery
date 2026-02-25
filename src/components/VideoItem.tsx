@@ -23,6 +23,7 @@ export default function VideoItem(props: VideoItemProps) {
 
   const srcAddress = `http://127.0.0.1:3333/video?path=${path}`;
   const lastSlash = path.lastIndexOf('/') + 1;
+  const vHeight = vWidth / (aspRatio[0] / aspRatio[1]);
 
   // establish variable to hold reference to <video> element for later teardown
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -181,33 +182,35 @@ export default function VideoItem(props: VideoItemProps) {
       if (maxVidId === path) {
         wasMax.current = true;
         return;
+      } else {
+        // a setTimout is used here to delay the pause and teardown of background videos for a specified amount of time after a video is maximized so that process is not interrupted; it may not be helpful
+        const deLay = setTimeout(() => {
+          // a different video has been maximized; pause or tear down this one...
+          // if this video has already loaded and is capable of playing, pause this video
+          if (thisVid.readyState >= 3 && izViz.current) {
+            if (thisVid.paused) {
+              vidPaused.current = true;
+            }
+            // // added for development
+            // console.log(`PAUSE (${thisVid.currentTime}): ${path}`);
+            thisVid.pause();
+          } else {
+            // this video has not yet loaded OR is not sufficiently visible; tear it down
+
+            // // added for development
+            // console.log(`STOP: ${path}`);
+
+            // WE'RE TEARING DOWN THE VIDEO: DO WE NEED THE CURRENT TIME?
+            tStamp.current = thisVid.currentTime;
+            thisVid.pause();
+            thisVid.removeAttribute('src');
+            thisVid.load();
+          }
+        }, 200);
+        return () => {
+          clearTimeout(deLay);
+        };
       }
-
-      // a different video has been maximized; pause or tear down this one...
-      // if this video has already loaded and is capable of playing, pause this video
-      if (thisVid.readyState >= 3 && izViz.current) {
-        if (thisVid.paused) {
-          vidPaused.current = true;
-        }
-        // // added for development
-        // console.log(`PAUSE (${thisVid.currentTime}): ${path}`);
-        thisVid.pause();
-
-        return;
-      }
-
-      // this video has not yet loaded OR is not sufficiently visible; tear it down
-
-      // // added for development
-      // console.log(`STOP: ${path}`);
-
-      // WE'RE TEARING DOWN THE VIDEO: DO WE NEED THE CURRENT TIME?
-      tStamp.current = thisVid.currentTime;
-      thisVid.pause();
-      thisVid.removeAttribute('src');
-      thisVid.load();
-
-      return;
     }
 
     // maxVidId === null; a previously maximized video is (de)maximized (this one or another one) OR this is the initial playback
@@ -247,8 +250,9 @@ export default function VideoItem(props: VideoItemProps) {
   }, [maxVidId]);
 
   // all of the inline styling included below is crucial to proper function
+  // vHeight for the <div> must be specified to avoid rendering issues and must include the height of all included elements, padding, margins, and line heights
   return (
-    <div style={{ width: vWidth }}>
+    <div style={{ width: vWidth, height: vHeight + 20 }}>
       <video
         // update videoRef.current to refer to this element
         // on mount, 'el' is a DOM node; on dismount, 'el' is null
@@ -259,8 +263,8 @@ export default function VideoItem(props: VideoItemProps) {
         className='video'
         controls
         width={vWidth}
-        height={vWidth / (aspRatio[0] / aspRatio[1])}
-        style={{ margin: 0 }}
+        height={vHeight}
+        style={{ margin: 0, padding: 0 }}
         muted={mute}
         autoPlay={false}
         loop={true}
@@ -270,8 +274,10 @@ export default function VideoItem(props: VideoItemProps) {
       <p
         style={{
           margin: 0,
-          paddingTop: '5px',
-          maxWidth: '100%',
+          padding: 0,
+          maxWidth: vWidth,
+          fontSize: '16px',
+          lineHeight: 1.25,
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
